@@ -11,6 +11,16 @@ use yii\db\Migration;
  */
 class m240307_144400_create_junction_table_for_person_and_document_tables extends Migration
 {
+	/**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+		$this->db = 'dbdata';
+		
+		parent::init();
+	}
+    
     /**
      * {@inheritdoc}
      */

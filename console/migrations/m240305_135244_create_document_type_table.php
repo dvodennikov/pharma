@@ -24,8 +24,8 @@ class m240305_135244_create_document_type_table extends Migration
     {
         $this->createTable('{{%document_type}}', [
             'id' => $this->primaryKey(),
-            'title' => $this->varchar(255)->unique(),
-            'custom_fields' => $this->json()->default(null),
+            'title' => $this->string(255)->unique(),
+            'custom_fields' => $this->json()->defaultValue(null),
         ]);
     }
 

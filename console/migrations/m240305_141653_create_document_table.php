@@ -27,13 +27,13 @@ class m240305_141653_create_document_table extends Migration
     {
         $this->createTable('{{%document}}', [
             'id' => $this->primaryKey(),
-            'document_type' => $this->int(11)->notNull(),
-            'serial' => $this->varchar(10)->default(null),
+            'document_type' => $this->integer(11)->notNull(),
+            'serial' => $this->string(10)->defaultValue(null),
             'number' => $this->integer(16)->notNull(),
             'issue_date' => $this->date()->notNull(),
-            'issuer' => $this->varchar(255)->notNull(),
-            'expire_date' => $this->date()->default(null),
-            'custom_fields' => $this->json()->default(null),
+            'issuer' => $this->string(255)->notNull(),
+            'expire_date' => $this->date()->defaultValue(null),
+            'custom_fields' => $this->json()->defaultValue(null),
         ]);
 
         // creates index for column `document_type`

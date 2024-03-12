@@ -27,10 +27,10 @@ class m240306_130847_create_drug_table extends Migration
     {
         $this->createTable('{{%drug}}', [
             'id' => $this->primaryKey(),
-            'title' => $this->varchar(255)->notNull(),
-            'description' => $this->varchar(4096)->default(null),
-            'measury' => $this->int(11)->notNull(),
-            'measury_unit' => $this->int(11)->notNull(),
+            'title' => $this->string(255)->notNull(),
+            'description' => $this->string(4096)->defaultValue(null),
+            'measury' => $this->integer(11)->notNull(),
+            'measury_unit' => $this->integer(11)->notNull(),
         ]);
 
         // creates index for column `measury_unit`

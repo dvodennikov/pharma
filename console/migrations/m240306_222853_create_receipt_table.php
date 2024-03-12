@@ -12,6 +12,16 @@ use yii\db\Migration;
  */
 class m240306_222853_create_receipt_table extends Migration
 {
+	/**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+		$this->db = 'dbdata';
+		
+		parent::init();
+	}
+    
     /**
      * {@inheritdoc}
      */
@@ -19,11 +29,11 @@ class m240306_222853_create_receipt_table extends Migration
     {
         $this->createTable('{{%receipt}}', [
             'id' => $this->primaryKey(),
-            'number' => $this->varchar(10)->default(null),
-            'person_id' => $this->int(11)->notNull(),
-            'drug_id' => $this->int(11)->notNull(),
-            'count' => $this->int(6)->notNull()->default(1),
-            'unit_id' => $this->int(11)->notNull(),
+            'number' => $this->string(10)->defaultValue(null),
+            'person_id' => $this->integer(11)->notNull(),
+            'drug_id' => $this->integer(11)->notNull(),
+            'quantity' => $this->integer(6)->notNull()->defaultValue(1),
+            'unit_id' => $this->integer(11)->notNull(),
         ]);
 
         // creates index for column `person_id`

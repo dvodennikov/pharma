@@ -24,13 +24,13 @@ class m240304_125557_create_person_table extends Migration
     {
         $this->createTable('{{%person}}', [
             'id' => $this->primaryKey(),
-            'surname' => $this->varchar(255)->notNull(),
-            'name' => $this->varchar(255)->notNull(),
-            'secondname' => $this->varchar(255)->defaultValue(null),
+            'surname' => $this->string(255)->notNull(),
+            'name' => $this->string(255)->notNull(),
+            'secondname' => $this->string(255)->defaultValue(null),
             'birthdate' => $this->date()->notnull(),
             'snils' => $this->integer(11)->notNull(),
             'polis' => $this->integer(14)->defaultValue(null),
-            'address' => $this->varchar(1024)->notNull(),
+            'address' => $this->string(1024)->notNull(),
         ]);
     }
 
