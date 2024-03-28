@@ -4,6 +4,7 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\DocumentType $model */
+/** @var array $customFields */
 
 $this->title = Yii::t('app', 'Update Document Type: {name}', [
     'name' => $model->title,
@@ -17,7 +18,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
-        'model' => $model,
+		'model' => $model,
+        //'customFields' => $customFields,
     ]) ?>
 
 </div>

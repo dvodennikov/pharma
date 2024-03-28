@@ -15,6 +15,8 @@ use Yii;
  */
 class DocumentType extends \yii\db\ActiveRecord
 {
+	public $customFields;
+	
     /**
      * {@inheritdoc}
      */
@@ -30,6 +32,65 @@ class DocumentType extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
+    
+    
+    /**
+     * Validate customFields fields, stores in custom_fields in db
+     * @param array $customFields
+     */
+    public function validateCustomFields($attribute, $params, $validator)
+    {
+		$customFields = $this->$attribute;
+		
+		if (!is_array($customFields)) {
+			$this->addError($attribute, \Yii::t('app', 'Wrong format: ' . print_r($customFields, true)));
+			
+			return;
+		}
+		 
+		 foreach ($customFields as $customField) {
+			 if (isset($customField['title'])) {
+				 if ((strlen($customField['title']) > 255) || (strlen($customField['title']) < 3))
+					$this->addError($attribute, \Yii::t('app', 'Title must contain between 3 and 255 characters'));
+			 } else {
+				 $this->addError($attribute, \Yii::t('app', 'No title is given'));
+			 }
+			 
+			 if (isset($customField['mask']) && (strlen($customField['mask']) > 255)) {
+				 $this->addError($attribute, \Yii::t('app', 'Mask must contain less than or equal to 255 characters'));
+			 }
+		 }
+	}
+	
+	/**
+     * Parse customFields fields
+     * @param array $customFields
+     */
+    public static function parseCustomFields($customFields)
+    {
+		if (!is_null($customFields) && is_array($customFields)) {
+			$customFieldsValidated = [];
+			foreach ($customFields as $customField) {
+				$customFieldsValidated[] = DocumentType::parseCustomField($customField);
+			}
+			
+			return $customFieldsValidated;
+		}
+		
+		return [];
+	}
+	
+	/**
+     * Parse customField fields
+     * @param array $customFields
+     */
+    public static function parseCustomField($customField)
+    {
+		return [
+			'title' => isset($customField['title'])?substr(strip_tags($customField['title']), 0, 255):'',
+			'mask'  => isset($customField['mask'])?substr(strip_tags($customField['mask']), 0, 255):''
+		];
+	}
 
     /**
      * {@inheritdoc}
@@ -37,11 +98,24 @@ class DocumentType extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['custom_fields'], 'safe'],
-            [['title'], 'string', 'max' => 255],
+            [['custom_fields'], 'validateCustomFields', 'skipOnEmpty' => false, 'skipOnError' => false],
+            //['custom_fields', 'default', 'value' => []],
+            ['customFields', 'validateCustomFields', 'skipOnEmpty' => false, 'skipOnError' => false],
+            [['title'], 'string', 'min' => 3, 'max' => 255],
             [['title'], 'unique'],
+            ['title', 'required'],
         ];
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function beforeValidate()
+    {
+		$this->custom_fields = DocumentType::parseCustomFields($this->customFields);
+		
+		return parent::beforeValidate();
+	}
 
     /**
      * {@inheritdoc}

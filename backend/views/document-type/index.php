@@ -31,8 +31,22 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'title',
-            'custom_fields',
+            //'title',
+            [
+				'attribute' => 'title',
+				'format' => 'html',
+				'content' => function($model) {
+					return \yii\helpers\Html::a($model->title, \yii\helpers\Url::to(['/document-type/update', 'id' => $model->id]));
+				},
+            ],
+            //'custom_fields',
+            [
+				'attribute' => 'custom_fields',
+				'format' => 'text',
+				'content' => function($model) {
+					return json_encode($model->custom_fields);
+				},
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, DocumentType $model, $key, $index, $column) {

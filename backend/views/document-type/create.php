@@ -4,6 +4,7 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\DocumentType $model */
+/** @var array $customFields */
 
 $this->title = Yii::t('app', 'Create Document Type');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Document Types'), 'url' => ['index']];
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        //'customFields' => $customFields,
     ]) ?>
 
 </div>

@@ -31,7 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'title',
-            'custom_fields',
+            //'custom_fields',
+            [
+				'attribute' => 'custom_fields',
+				'format' => 'text',
+				'value' => function($model) {
+					return json_encode($model->custom_fields);
+				},
+            ],
         ],
     ]) ?>
 

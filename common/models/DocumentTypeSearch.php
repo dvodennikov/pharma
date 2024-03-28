@@ -11,6 +11,8 @@ use common\models\DocumentType;
  */
 class DocumentTypeSearch extends DocumentType
 {
+	//public $custom_fields_text;
+	
     /**
      * {@inheritdoc}
      */
@@ -18,7 +20,8 @@ class DocumentTypeSearch extends DocumentType
     {
         return [
             [['id'], 'integer'],
-            [['title', 'custom_fields'], 'safe'],
+            [['title'], 'string', 'max' => 255], 
+            ['custom_fields', 'string', 'max' => 255],
         ];
     }
 
@@ -55,14 +58,25 @@ class DocumentTypeSearch extends DocumentType
             // $query->where('0=1');
             return $dataProvider;
         }
+        
+        $this->custom_fields = isset($params['DocumentTypeSearch']['custom_fields'])?$params['DocumentTypeSearch']['custom_fields']:null;
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
         ]);
 
-        $query->andFilterWhere(['ilike', 'title', $this->title])
-            ->andFilterWhere(['ilike', 'custom_fields', $this->custom_fields]);
+        $query->andFilterWhere(['ilike', 'title', $this->title]);
+            //->andFilterWhere(['ilike', 'custom_fields_text', $this->custom_fields]);
+        
+        if (isset($this->custom_fields) && (strlen($this->custom_fields) > 0)) {
+            if (stripos(\Yii::$app->db->dsn, 'psql') >= 0) {
+				$query->andWhere('jsonb_path_query_array(custom_fields, \'$[*].title\')::text LIKE :text', ['text' => '%' . $this->custom_fields . '%'])
+				      ->orWhere('jsonb_path_query_array(custom_fields, \'$[*].mask\')::text LIKE :text', ['text' => '%' . $this->custom_fields . '%']);
+			} elseif (stripos(\Yii::$app->db->dsn, 'mysql') >= 0) {
+				$query->andWhere('JSON_SEARCH(custom_fields, \'all\', :text) IS NOT NULL', ['text' => '%' . $this->custom_fields . '%']);
+			}
+        }
 
         return $dataProvider;
     }

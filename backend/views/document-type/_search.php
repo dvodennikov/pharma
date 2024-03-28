@@ -23,6 +23,10 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'title') ?>
 
     <?= $form->field($model, 'custom_fields') ?>
+    <div class="form-group field-documenttypesearch-custom_fields_text">
+		<label class="control-label" for="documenttypesearch-custom_fields_text">
+		<input type="text" class="form-control" name="documenttypesearch-custom_fields_text" maxlength="255">
+	</div>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
