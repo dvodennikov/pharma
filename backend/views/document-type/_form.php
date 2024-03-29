@@ -14,6 +14,10 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'serial_mask')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'number_mask')->textInput(['maxlength' => true]) ?>
 
     <?php // echo $form->field($model, 'custom_fields', ['inputOptions' => ['type'=> 'hidden', 'value' => json_encode($model->custom_fields)]])->textArea() ?>
     <input type="hidden" value="<?= json_encode($model->custom_fields) ?>">

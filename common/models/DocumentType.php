@@ -104,6 +104,8 @@ class DocumentType extends \yii\db\ActiveRecord
             [['title'], 'string', 'min' => 3, 'max' => 255],
             [['title'], 'unique'],
             ['title', 'required'],
+            [['serial_mask', 'number_mask'], 'string', 'max' => 255],
+            [['serial_mask', 'number_mask'], 'default', 'value' => ''],
         ];
     }
     
@@ -125,6 +127,8 @@ class DocumentType extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'title' => Yii::t('app', 'Title'),
+            'serial_mask' => Yii::t('app', 'Serial Mask'),
+            'number_mask' => Yii::t('app', 'Number Mask'),
             'custom_fields' => Yii::t('app', 'Custom Fields'),
         ];
     }

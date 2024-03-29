@@ -19,7 +19,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
 		'model' => $model,
-        //'customFields' => $customFields,
     ]) ?>
 
 </div>
