@@ -12,17 +12,27 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'document_type')->textInput() ?>
+    <?php //echo $form->field($model, 'document_type')->textInput() ?>
+    <div class="form-group field-document-document_type">
+    <?php foreach(common\models\DocumentType::find()->all() as $docType) : ?>
+		<input type="radio" 
+		       id="<?= htmlspecialchars($docType->title) ?>" 
+		       name="Document[document_type]" 
+		       value="<?= $docType->id ?>" >
+		<label for="<?= htmlspecialchars($docType->title) ?>"><?= htmlspecialchars($docType->title) ?></label><br>
+    <?php endforeach; ?>
+		<div class="help-block"></div>
+    </div>
 
     <?= $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'number')->textInput() ?>
 
-    <?= $form->field($model, 'issue_date')->textInput() ?>
+    <?= $form->field($model, 'issue_date')->textInput(['type' => 'date', 'min' => '1900-01-01']) ?>
 
     <?= $form->field($model, 'issuer')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'expire_date')->textInput() ?>
+    <?= $form->field($model, 'expire_date')->textInput(['type' => 'date', 'min' => '1900-01-01']) ?>
 
     <?= $form->field($model, 'custom_fields')->textInput() ?>
 
