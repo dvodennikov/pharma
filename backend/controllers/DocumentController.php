@@ -68,10 +68,27 @@ class DocumentController extends Controller
     public function actionCreate()
     {
         $model = new Document();
-
+        
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+				$customFields = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), $model->document_type, $model);
+				//throw new \yii\base\NotSupportedException(print_r($customFields, true));
+				$model->customFields = $customFields;
+				$custom_fields = [];
+				foreach ($customFields as $customField) {
+					$custom_fields[] = (object) $customField;
+				}
+				
+				$model->custom_fields = $custom_fields;
+				
+				if ($model->save()) {
+					if ((count($model->custom_fields) == 0) && (\common\models\DocumentType::getCustomFieldsCount($model->document_type) > 0)) {
+						//throw new \yii\base\NotSupportedException(print_r($model, true));
+						return $this->redirect(['update', 'id' => $model->id]);
+					}
+					
+					return $this->redirect(['view', 'id' => $model->id]);
+				}
             }
         } else {
             $model->loadDefaultValues();
@@ -92,15 +109,51 @@ class DocumentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        
+        if ($this->request->isPost) {
+			$customFields        = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), $model->document_type, $model);
+			$model->customFields = $customFields;
+			//throw new \yii\base\NotSupportedException(print_r($customFields, 1));
+            if ($model->load($this->request->post())) {
+				$custom_fields = [];
+				foreach ($customFields as $customField) {
+					$custom_fields[] = (object) $customField;
+				}
+				
+				$model->custom_fields = $custom_fields;
+				
+				if ($model->save()) {
+					return $this->redirect(['view', 'id' => $model->id]);
+				}
+            }
         }
-
+        
         return $this->render('update', [
             'model' => $model,
         ]);
     }
+    
+    /**
+     * Refresh Document model.
+     * @param int $id ID
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionRefresh($id)
+    {
+		$model = $id?$this->findModel($id):new Document();
+		
+		$model->load($this->request->post());
+		
+		$customFields = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), 
+													$model->document_type);
+		
+		$model->custom_fields = $customFields;
+		
+		return $this->render($id?'update':'create', [
+			'model' => $model,
+		]);
+	}
 
     /**
      * Deletes an existing Document model.
@@ -125,7 +178,8 @@ class DocumentController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Document::findOne(['id' => $id])) !== null) {
+        //if (($model = Document::findOne(['id' => $id])) !== null) {
+        if (($model = Document::find()->joinWith('documentType')->andWhere([Document::tableName() . '.id' => $id])->one()) !== null) {
             return $model;
         }
 

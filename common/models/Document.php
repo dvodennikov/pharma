@@ -22,6 +22,8 @@ use Yii;
  */
 class Document extends \yii\db\ActiveRecord
 {
+	public $customFields;
+	
     /**
      * {@inheritdoc}
      */
@@ -37,6 +39,100 @@ class Document extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
+    
+    /**
+     * Validate date fields
+     * @param string $min
+     */
+    public function validateDate($attribute, $params, $validator)
+    {
+		$date = $this->$attribute;
+		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
+			if (isset($params['min'])) {
+				if (self::dateToTimestamp($date) < self::dateToTimestamp($params['min'])) {
+					$this->addError($attribute, \Yii::t('app', 'Date ' . $date . ' must be greater than or equal to ' . $params['min']));
+				}
+			}
+		} else {
+			$this->addError($attribute, \Yii::t('app', 'Wrong date: ' . $date));
+		}
+	}
+    
+    /**
+     * Validate customFields fields, stores in custom_fields in db
+     * @param array $customFields
+     */
+    public function validateCustomFields($attribute, $params, $validator)
+    {
+		$customFields = $this->$attribute;
+		
+		if (!is_array($customFields)) {
+			$this->addError($attribute, \Yii::t('app', 'Wrong format: ' . print_r($customFields, true)));
+			
+			return;
+		}
+		
+		Document::parseCustomFields($customFields, $params['documentType'], $this);
+	}
+	
+	/**
+     * Parse customFields fields
+     * @param array $customFields
+     */
+    public static function parseCustomFields($customFields, $documentTypeId, $validator = null)
+    {
+		if (is_null($documentTypeId)) 
+			return 	[];
+			
+		$documentType = \common\models\DocumentType::findOne(['id' => $documentTypeId]);
+		
+		if (!is_null($customFields) && is_array($customFields) && !is_null($documentType->custom_fields) && is_array($documentType->custom_fields)) {
+			$customFieldsValidated = [];
+			foreach ($documentType->custom_fields as $fieldParams) {
+				foreach ($customFields as $customField) {
+					if ($customField['title'] == $fieldParams['title']) {
+						$customFieldsValidated[] = Document::parseCustomField($customField, $fieldParams['mask'], $validator);
+						
+						continue 2;
+					}
+				}
+				
+				$customFieldsValidated[] = ['title' => $fieldParams['title'], 'value' => null];
+			}
+			
+			return $customFieldsValidated;
+		}
+		
+		return [];
+	}
+	
+	/**
+     * Parse customField fields
+     * @param array $customFields
+     * @param string $mask
+     */
+    public static function parseCustomField($customField, $mask, $validator = null)
+    {
+		if (is_null($mask) || (strlen($mask) == 0)) {
+			return [
+				'title' => $customField['title'],
+				'value' => substr($customField['value'], 0, 4096)
+			];
+		} elseif (preg_match('/^\s*(' . $mask . ')\s*$/', $customField['value'], $matches)) {
+			return [
+				'title' => $customField['title'],
+				'value' => $matches[1]
+			];
+		}
+		
+		if (!is_null($validator))
+			$validator->addError('customFields', Yii::t('app', 'Value of the field ' . $customField['title'] . ' does not match mask ' . $mask));
+		
+		return [
+			'title' => $customField['title'],
+			'value' => null
+		];
+	}
 
     /**
      * {@inheritdoc}
@@ -44,13 +140,17 @@ class Document extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['document_type', 'number', 'issue_date', 'issuer'], 'required'],
-            [['document_type', 'number'], 'default', 'value' => null],
+            [['document_type', 'number', 'issue_date', 'issuer', 'surname', 'name'], 'required'],
+            [['document_type', 'number', 'second_name'], 'default', 'value' => null],
             [['document_type', 'number'], 'integer'],
-            [['issue_date', 'expire_date', 'custom_fields'], 'safe'],
+            [['custom_fields'], 'safe'],
+            ['issue_date', 'validateDate'],
+            ['expire_date', 'validateDate', 'params' => ['min' => $this->issue_date]],
             [['serial'], 'string', 'max' => 10],
-            [['issuer'], 'string', 'max' => 255],
+            [['surname', 'name', 'second_name', 'issuer'], 'string', 'max' => 255],
             [['document_type'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::class, 'targetAttribute' => ['document_type' => 'id']],
+            ['customFields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
+            //['custom_fields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
         ];
     }
 
@@ -109,4 +209,17 @@ class Document extends \yii\db\ActiveRecord
     {
         return new \common\models\queries\DocumentQuery(get_called_class());
     }
+    
+    /**
+     * Convert date to timestamp
+     * @param string date
+     */
+    public static function dateToTimestamp($date)
+    {
+		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date, $matches)) {
+			return mktime(0, 0, 0, $matches[2], $matches[3], $matches[1]);
+		}
+		
+		return 0;
+	}
 }

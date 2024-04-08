@@ -31,13 +31,31 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'document_type',
+            //'document_type',
+            [
+				'attribute' => 'document_type',
+				'format' => 'text',
+				'content' => function($model) {
+					return \yii\helpers\Html::a($model->documentType->title, \yii\helpers\Url::to(['/document/update', 'id' => $model->id]));
+				},
+				
+            ],
             'serial',
             'number',
+            'surname',
+            'name',
+            'second_name',
             'issue_date',
             //'issuer',
             //'expire_date',
             //'custom_fields',
+            [
+				'attribute' => 'custom_fields',
+				'format' => 'text',
+				'content' => function($model) {
+					return json_encode($model->custom_fields);
+				},
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Document $model, $key, $index, $column) {

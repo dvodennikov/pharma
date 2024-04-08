@@ -105,7 +105,7 @@ class DocumentType extends \yii\db\ActiveRecord
             [['title'], 'unique'],
             ['title', 'required'],
             [['serial_mask', 'number_mask'], 'string', 'max' => 255],
-            [['serial_mask', 'number_mask'], 'default', 'value' => ''],
+            [['serial_mask', 'number_mask'], 'default', 'value' => null],
         ];
     }
     
@@ -151,4 +151,15 @@ class DocumentType extends \yii\db\ActiveRecord
     {
         return new \common\models\queries\DocumentTypeQuery(get_called_class());
     }
+    
+    /**
+     * Get custom fields count for DocumentType by id
+     * 
+     * @param int id
+     * @return int custom fields count for DocumentType
+     */
+    public static function getCustomFieldsCount($id)
+    {
+		return DocumentType::find(['id' => $id])->count();
+	}
 }

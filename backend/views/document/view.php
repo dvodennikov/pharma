@@ -36,7 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'issue_date',
             'issuer',
             'expire_date',
-            'custom_fields',
+            //'custom_fields',
+            [
+				'attribute' => 'custom_fields',
+				'format' => 'text',
+				'value' => function($model) {
+					return json_encode($model->custom_fields);
+				},
+            ],
         ],
     ]) ?>
 
