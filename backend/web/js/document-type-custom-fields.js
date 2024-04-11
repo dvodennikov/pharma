@@ -3,7 +3,7 @@ $('button#add-custom-fields').click(function(e) {
 	var count = $('#custom-fields').children('div.control-group').length;
 	
 	$.ajax({
-		url: '/document-type/get-custom-fields?idx=' + count,
+		url: '/document-type/get-new-custom-field?idx=' + count,
 	}).done(function(html) {
 		console.log(html);
 		var customFields = $('div#custom-fields');
@@ -17,6 +17,18 @@ $('button#add-custom-fields').click(function(e) {
 		});
 		
 		updateIndex(customFields);
+	});
+})
+
+$('select.document-type').on('change', function() {
+	console.log('on change');
+	$.ajax({
+		url: '/document/get-custom-fields?id=' + this.value
+	}).done(function(html) {
+		console.log(html);
+		var customFields = $('div#custom-fields');
+		$(customFields).children('div').detach();
+		$(customFields).append(html);
 	});
 })
 

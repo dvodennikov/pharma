@@ -15,23 +15,23 @@ if (!isset($id))
 ?>
 
 <div class="control-group py-2">
-	<label for="customFields[<?= $idx ?>][title]">
+	<label for="DocumentType[custom_fields][<?= $idx ?>][title]">
 		<?= Yii::t('app', 'Title') ?>
 	</label>
 	<input type="text" 
-	       id="customFields[<?= $idx ?>][title]" 
-	       name="customFields[<?= $idx ?>][title]" 
+	       id="DocumentType[custom_fields][<?= $idx ?>][title]" 
+	       name="DocumentType[custom_fields][<?= $idx ?>][title]" 
 	       class="form-control" 
 	       size="15"
 	       value="<?= isset($customField['title'])?$customField['title']:'' ?>"
 	       placeholder="<?= Yii::t('app', 'Title') ?>">
 	<br>
-	<label for="customFields[<?= $idx ?>][mask]">
+	<label for="DocumentType[custom_fields][<?= $idx ?>][mask]">
 		<?= Yii::t('app', 'Mask') ?>
 	</label>
 	<input type="text" 
-	       id="customFields[<?= $idx ?>][mask]" 
-	       name="customFields[<?= $idx ?>][mask]" 
+	       id="DocumentType[custom_fields][<?= $idx ?>][mask]" 
+	       name="DocumentType[custom_fields][<?= $idx ?>][mask]" 
 	       class="form-control" 
 	       size="5"
 	       value="<?= isset($customField['mask'])?$customField['mask']:'' ?>"

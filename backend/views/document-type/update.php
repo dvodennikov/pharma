@@ -4,7 +4,6 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\DocumentType $model */
-/** @var array $customFields */
 
 $this->title = Yii::t('app', 'Update Document Type: {name}', [
     'name' => $model->title,

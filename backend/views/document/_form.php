@@ -6,6 +6,8 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var common\models\Document $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$documentTypes = [];
 ?>
 
 <div class="document-form">
@@ -20,8 +22,14 @@ use yii\widgets\ActiveForm;
 		<input type="hidden" name="Document[document_type]" value="<?= $model->document_type ?>">
 	<?php else : ?>
 		<label for="Document[document_type]"><?= \Yii::t('app', 'Document type')?></label><br>
-		<select id="Document[document_type]" class="form-control" name="Document[document_type]">
-    <?php foreach(common\models\DocumentType::find()->all() as $docType) : ?>
+		<select id="Document[document_type]" class="form-control document-type" name="Document[document_type]">
+    <?php $documentTypes = common\models\DocumentType::find()->all();
+		//init model by first documentType selected
+		if (!isset($model->document_type) && isset($documentTypes[0])) {
+			$model->document_type = $documentTypes[0]->id;
+			$model->custom_fields = $documentTypes[0]->custom_fields;
+		}
+		foreach($documentTypes as $docType) : ?>
 		<option value="<?= $docType->id ?>" <?= ($model->document_type == $docType->id)?'selected':'' ?>>
 			<?= htmlspecialchars($docType->title) ?>
 		</option>
@@ -31,7 +39,7 @@ use yii\widgets\ActiveForm;
 		<div class="help-block"></div>
     </div>
 
-    <?= $form->field($model, 'serial')->textInput(['maxlength' => true, 'pattern' => isset($model->documentType->serial_mask)?$model->documentType->serial_mask:'.{255}']) ?>
+    <?= $form->field($model, 'serial')->textInput(isset($model->documentType->serial_mask)?['pattern' => htmlspecialchars($model->documentType->serial_mask)]:[]) ?>
 
     <?= $form->field($model, 'number')->textInput(isset($model->documentType->number_mask)?['pattern' => htmlspecialchars($model->documentType->number_mask)]:[]) ?>
     
@@ -52,8 +60,8 @@ use yii\widgets\ActiveForm;
     <div id="custom-fields" class="form-group my-3">
 		<h3><?= Yii::t('app', 'Custom fields') ?>:</h3>
 		
-	<?php if ($model->hasErrors('customFields')) : ?>
-		<div class="alert alert-danger"><?= $model->getFirstError('customFields') ?></div>
+	<?php if ($model->hasErrors('custom_fields')) : ?>
+		<div class="alert alert-danger"><?= $model->getFirstError('custom_fields') ?></div>
 	<?php endif; ?>
     <?php
 		//if (!is_null($customFields) && is_array($customFields)) :
@@ -75,7 +83,7 @@ use yii\widgets\ActiveForm;
 				print $this->render('_custom_fields', [
 					'fieldParams' => $fieldParams,
 					'value'       => $value,
-					'id'          => $model->id,
+					'model'       => $model,
 					'idx'         => $idx
 				]);
 			}
@@ -89,6 +97,7 @@ use yii\widgets\ActiveForm;
 			if (is_null($model->id))
 				echo Html::submitButton(Yii::t('app', 'Refresh'), ['id' => 'refresh-document', 'class' => 'btn btn-primary', 'formaction' => '/document/refresh?id=' . $model->id]) 
         ?>
+        <?= Html::a(Yii::t('app', 'Cancel'), '/document', ['class' => 'btn btn-danger']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

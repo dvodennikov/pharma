@@ -77,16 +77,16 @@ class DocumentTypeController extends Controller
     public function actionCreate()
     {
         $model        = new DocumentType();
-        $customFields = DocumentType::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'));
+        //$customFields = DocumentType::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'));
         
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-				$custom_fields = [];
+				/*$custom_fields = [];
 				foreach ($customFields as $customField) {
 					$custom_fields[] = (object) $customField;
 				}
 				
-				$model->custom_fields = $custom_fields;
+				$model->custom_fields = $custom_fields;*/
 				
 				if ($model->save()) {
 					return $this->redirect(['view', 'id' => $model->id]);
@@ -98,7 +98,7 @@ class DocumentTypeController extends Controller
         
         return $this->render('create', [
             'model' => $model,
-            'customFields' => $customFields,
+            //'customFields' => $customFields,
         ]);
     }
 
@@ -112,28 +112,29 @@ class DocumentTypeController extends Controller
     public function actionUpdate($id)
     {
         $model        = $this->findModel($id);
-        $customFields = DocumentType::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'));
-        $model->customFields = $customFields;
+        //$customFields = DocumentType::parseCustomFields($model->custom_fields);
         
         if ($this->request->isPost && $model->load($this->request->post())) {
-			$custom_fields = [];
+			/*$customFields        = DocumentType::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'));
+			$model->customFields = $customFields;
+			$custom_fields       = [];
 			foreach ($customFields as $customField) {
 				$custom_fields[] = (object) $customField;
 			}
 			
-			$model->custom_fields = $custom_fields;
+			$model->custom_fields = $custom_fields;*/
 			
 			if ($model->save()) {
 				return $this->redirect(['view', 'id' => $model->id]);
 			}
 		}
 		
-		if (count($customFields) <= 0)
-			$customFields = DocumentType::parseCustomFields($model->custom_fields);
+		/*if (count($customFields) <= 0)
+			$customFields = DocumentType::parseCustomFields($model->custom_fields);*/
 
         return $this->render('update', [
             'model' => $model,
-            'customFields' => $customFields,
+            //'customFields' => $customFields,
         ]);
     }
 
@@ -198,10 +199,10 @@ class DocumentTypeController extends Controller
 	 }
 	
 	/**
-	 * Return HTML for custom fields group for AJAX request
+	 * Return HTML for new custom field group for AJAX request
 	 * @return string|\yii\web\Response
 	 */
-	 public function actionGetCustomFields()
+	 public function actionGetNewCustomField()
 	 {
 		 $idx = (int) \Yii::$app->request->get('idx', 0);
 		 
@@ -209,6 +210,27 @@ class DocumentTypeController extends Controller
 			'customField' => [],
 			'idx'         => $idx,
 		 ]);
+	 }
+
+	/**
+	 * Return HTML for custom fields for DocumentType model by id
+	 * for AJAX request
+	 * @return string|\yii\web\Response
+	 */
+	public function actionGetCustomFields($id)
+	{
+		$idx = (int) \Yii::$app->request->get('idx', 0);
+		$model = $this->findModel($id);
+
+		$response = '';
+		foreach ($model->custom_fields as $customField) {
+			$response .= $this->renderAjax('_custom_fields', [
+				'customField' => $customField,
+				'idx'         => $idx++,
+			]);
+		}
+		
+		return $response;
 	 }
 
     /**

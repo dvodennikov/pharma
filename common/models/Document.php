@@ -22,7 +22,7 @@ use Yii;
  */
 class Document extends \yii\db\ActiveRecord
 {
-	public $customFields;
+	//public $customFields;
 	
     /**
      * {@inheritdoc}
@@ -83,6 +83,7 @@ class Document extends \yii\db\ActiveRecord
     {
 		if (is_null($documentTypeId)) 
 			return 	[];
+		//$validator->addError('customFields', Yii::t('app', 'Value of the field '));
 			
 		$documentType = \common\models\DocumentType::findOne(['id' => $documentTypeId]);
 		
@@ -90,6 +91,7 @@ class Document extends \yii\db\ActiveRecord
 			$customFieldsValidated = [];
 			foreach ($documentType->custom_fields as $fieldParams) {
 				foreach ($customFields as $customField) {
+					//$customField = get_object_vars($customField);
 					if ($customField['title'] == $fieldParams['title']) {
 						$customFieldsValidated[] = Document::parseCustomField($customField, $fieldParams['mask'], $validator);
 						
@@ -115,21 +117,22 @@ class Document extends \yii\db\ActiveRecord
     {
 		if (is_null($mask) || (strlen($mask) == 0)) {
 			return [
-				'title' => $customField['title'],
+				'title' => substr($customField['title'], 0, 255),
 				'value' => substr($customField['value'], 0, 4096)
 			];
-		} elseif (preg_match('/^\s*(' . $mask . ')\s*$/', $customField['value'], $matches)) {
+		} elseif (isset($customField['value']) && preg_match('/^\s*(' . $mask . ')\s*$/', $customField['value'], $matches)) {
 			return [
-				'title' => $customField['title'],
+				'title' => substr($customField['title'], 0, 255),
 				'value' => $matches[1]
 			];
 		}
 		
-		if (!is_null($validator))
-			$validator->addError('customFields', Yii::t('app', 'Value of the field ' . $customField['title'] . ' does not match mask ' . $mask));
+		if (!is_null($validator)) {
+			$validator->addError('custom_fields', Yii::t('app', 'Value of the field ' . $customField['title'] . ' does not match mask ' . $mask));
+		}
 		
 		return [
-			'title' => $customField['title'],
+			'title' => substr($customField['title'], 0, 255),
 			'value' => null
 		];
 	}
@@ -143,14 +146,14 @@ class Document extends \yii\db\ActiveRecord
             [['document_type', 'number', 'issue_date', 'issuer', 'surname', 'name'], 'required'],
             [['document_type', 'number', 'second_name'], 'default', 'value' => null],
             [['document_type', 'number'], 'integer'],
-            [['custom_fields'], 'safe'],
+            //[['custom_fields'], 'safe'],
             ['issue_date', 'validateDate'],
             ['expire_date', 'validateDate', 'params' => ['min' => $this->issue_date]],
             [['serial'], 'string', 'max' => 10],
             [['surname', 'name', 'second_name', 'issuer'], 'string', 'max' => 255],
             [['document_type'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::class, 'targetAttribute' => ['document_type' => 'id']],
-            ['customFields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
-            //['custom_fields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
+            //['customFields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
+            ['custom_fields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
         ];
     }
 
@@ -170,6 +173,27 @@ class Document extends \yii\db\ActiveRecord
             'custom_fields' => Yii::t('app', 'Custom Fields'),
         ];
     }
+    
+    /**
+     * {@inheritdoc}
+     * Convert custom_fields attribute from array of arrays to array of objects before save.
+     * @return \common\models\queries\DocumentQuery the active query used by this AR class.
+     */
+    public function beforeSave($insert)
+    {
+		if (!parent::beforeSave($insert)) {
+			return false;
+		}
+		
+		$custom_fields = [];
+		foreach ($this->custom_fields as $customField) {
+			$custom_fields[] = (object) $customField;
+		}
+		
+		$this->custom_fields = $custom_fields;
+		
+		return true;
+	}
 
     /**
      * Gets query for [[DocumentType]].

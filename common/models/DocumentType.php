@@ -15,7 +15,7 @@ use Yii;
  */
 class DocumentType extends \yii\db\ActiveRecord
 {
-	public $customFields;
+	//public $customFields;
 	
     /**
      * {@inheritdoc}
@@ -82,7 +82,7 @@ class DocumentType extends \yii\db\ActiveRecord
 	
 	/**
      * Parse customField fields
-     * @param array $customFields
+     * @param array $customField
      */
     public static function parseCustomField($customField)
     {
@@ -100,7 +100,7 @@ class DocumentType extends \yii\db\ActiveRecord
         return [
             [['custom_fields'], 'validateCustomFields', 'skipOnEmpty' => false, 'skipOnError' => false],
             //['custom_fields', 'default', 'value' => []],
-            ['customFields', 'validateCustomFields', 'skipOnEmpty' => false, 'skipOnError' => false],
+            //['customFields', 'validateCustomFields', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['title'], 'string', 'min' => 3, 'max' => 255],
             [['title'], 'unique'],
             ['title', 'required'],
@@ -114,7 +114,7 @@ class DocumentType extends \yii\db\ActiveRecord
      */
     public function beforeValidate()
     {
-		$this->custom_fields = DocumentType::parseCustomFields($this->customFields);
+		//$this->custom_fields = DocumentType::parseCustomFields($this->customFields);
 		
 		return parent::beforeValidate();
 	}

@@ -71,17 +71,21 @@ class DocumentController extends Controller
         
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-				$customFields = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), $model->document_type, $model);
-				//throw new \yii\base\NotSupportedException(print_r($customFields, true));
-				$model->customFields = $customFields;
-				$custom_fields = [];
+				//$customFields        = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), $model->document_type, $model);
+				//$customFields        = \Yii::$app->request->getBodyParam('customFields');
+				//$model->customFields = $customFields;
+				
+				/*$custom_fields = [];
 				foreach ($customFields as $customField) {
 					$custom_fields[] = (object) $customField;
 				}
 				
-				$model->custom_fields = $custom_fields;
+				$model->custom_fields = $custom_fields;*/
+				//$model->custom_fields = $customFields;
+				Document::parseCustomFields($model->custom_fields, $model->document_type, $model);
+				//throw new \yii\base\NotSupportedException(print_r($model->getErrors(), true));
 				
-				if ($model->save()) {
+				if (!$model->hasErrors() && $model->save()) {
 					if ((count($model->custom_fields) == 0) && (\common\models\DocumentType::getCustomFieldsCount($model->document_type) > 0)) {
 						//throw new \yii\base\NotSupportedException(print_r($model, true));
 						return $this->redirect(['update', 'id' => $model->id]);
@@ -111,16 +115,17 @@ class DocumentController extends Controller
         $model = $this->findModel($id);
         
         if ($this->request->isPost) {
-			$customFields        = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), $model->document_type, $model);
-			$model->customFields = $customFields;
+			//$customFields        = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), $model->document_type, $model);
+			//$model->customFields = $customFields;
 			//throw new \yii\base\NotSupportedException(print_r($customFields, 1));
             if ($model->load($this->request->post())) {
-				$custom_fields = [];
+				/*$custom_fields = [];
 				foreach ($customFields as $customField) {
 					$custom_fields[] = (object) $customField;
 				}
 				
-				$model->custom_fields = $custom_fields;
+				$model->custom_fields = $custom_fields;*/
+				//$model->custom_fields = $customFields;
 				
 				if ($model->save()) {
 					return $this->redirect(['view', 'id' => $model->id]);
@@ -145,10 +150,11 @@ class DocumentController extends Controller
 		
 		$model->load($this->request->post());
 		
-		$customFields = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), 
-													$model->document_type);
+		/*$customFields = Document::parseCustomFields(\Yii::$app->request->getBodyParam('customFields'), 
+													$model->document_type,
+													$model);*/
 		
-		$model->custom_fields = $customFields;
+		//$model->custom_fields = $customFields;
 		
 		return $this->render($id?'update':'create', [
 			'model' => $model,
@@ -168,6 +174,29 @@ class DocumentController extends Controller
 
         return $this->redirect(['index']);
     }
+    
+    /**
+	 * Return HTML for custom fields for DocumentType model by id
+	 * for AJAX request
+	 * @return string|\yii\web\Response
+	 */
+	public function actionGetCustomFields($id)
+	{
+		$idx = (int) \Yii::$app->request->get('idx', 0);
+		$documentType = \common\models\DocumentType::findOne(['id' => $id]);
+		//throw new \yii\base\NotSupportedException(print_r($documentType, true));
+
+		$response = '';
+		foreach ($documentType->custom_fields as $customField) {
+			$response .= $this->renderAjax('_custom_fields', [
+				'customField' => $customField,
+				'fieldParams' => $customField,
+				'idx'         => $idx++,
+			]);
+		}
+		
+		return $response;
+	 }
 
     /**
      * Finds the Document model based on its primary key value.
