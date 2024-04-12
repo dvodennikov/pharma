@@ -59,10 +59,13 @@ class PersonSearch extends Person
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'birthdate' => $this->birthdate,
+            //'birthdate' => $this->birthdate,
             'snils' => $this->snils,
             'polis' => $this->polis,
         ]);
+        
+        if (preg_match('/(\d{2}\-\d{2}\-\d{4})|(\d{4}\-\d{2}\-\d{2})/',$this->birthdate, $matches))
+			$query->andFilterWhere(['birthdate' => ($matches[1] != '')?$matches[1]:$matches[2]]);
 
         $query->andFilterWhere(['ilike', 'surname', $this->surname])
             ->andFilterWhere(['ilike', 'name', $this->name])

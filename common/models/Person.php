@@ -46,12 +46,56 @@ class Person extends \yii\db\ActiveRecord
         return [
             [['surname', 'name', 'birthdate', 'snils', 'address'], 'required'],
             [['birthdate'], 'safe'],
-            [['snils', 'polis'], 'default', 'value' => null],
-            [['snils', 'polis'], 'integer'],
+            [['polis'], 'default', 'value' => null],
+            ['snils', 'validateSnils'],
+            ['polis', 'validatePolis'],
             [['surname', 'name', 'secondname'], 'string', 'max' => 255],
             [['address'], 'string', 'max' => 1024],
         ];
     }
+    
+    /**
+     * Validate snils attribute
+     * @param string $attribute
+     * @param array $params
+     * @param $validator
+     */
+    public function validateSnils($attribute, $params, $validator = null)
+    {
+		$snils = $this->$attribute;
+		
+		if (is_null($validator))
+			$validator = $this;
+			
+		if (preg_match('/^\s*(\d{11})\s*$/', $snils, $matches)) {
+			$this->snils = $matches[1];
+		} else {
+			$validator->addError($this, $attribute, Yii::t('app', 'SNILS field must contain 11 digits'));
+		}
+	}
+
+    /**
+     * Validate polis attribute
+     * @param string $attribute
+     * @param array $params
+     * @param $validator
+     */
+    public function validatePolis($attribute, $params, $validator = null)
+    {
+		$polis = $this->$attribute;
+		
+		if (is_null($polis))
+			return;
+		
+		if (is_null($validator))
+			$validator = $this;
+			
+		if (preg_match('/^\s*(\d{14})\s*$/', $polis, $matches)) {
+			$this->polis = $matches[1];
+		} else {
+			$validator->addError($this, $attribute, Yii::t('app', 'Polis field must contain 14 digits'));
+		}
+	}
 
     /**
      * {@inheritdoc}

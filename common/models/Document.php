@@ -145,7 +145,7 @@ class Document extends \yii\db\ActiveRecord
         return [
             [['document_type', 'number', 'issue_date', 'issuer', 'surname', 'name'], 'required'],
             [['document_type', 'number', 'second_name'], 'default', 'value' => null],
-            [['document_type', 'number'], 'integer'],
+            [['document_type', 'number', 'person_id'], 'integer'],
             //[['custom_fields'], 'safe'],
             ['issue_date', 'validateDate'],
             ['expire_date', 'validateDate', 'params' => ['min' => $this->issue_date]],
@@ -171,6 +171,7 @@ class Document extends \yii\db\ActiveRecord
             'issuer' => Yii::t('app', 'Issuer'),
             'expire_date' => Yii::t('app', 'Expire Date'),
             'custom_fields' => Yii::t('app', 'Custom Fields'),
+            'person_id' => Yii::t('app', 'Person'),
         ];
     }
     
@@ -206,13 +207,13 @@ class Document extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[People]].
+     * Gets query for [[Person]].
      *
      * @return \yii\db\ActiveQuery|\common\models\queries\PersonQuery
      */
-    public function getPeople()
+    public function getPerson()
     {
-        return $this->hasMany(Person::class, ['id' => 'person_id'])->viaTable('person_document', ['document_id' => 'id']);
+        return $this->hasOne(Person::class, ['id' => 'person_id']);
     }
 
     /**
