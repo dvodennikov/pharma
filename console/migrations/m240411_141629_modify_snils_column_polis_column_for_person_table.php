@@ -31,10 +31,10 @@ class m240411_141629_modify_snils_column_polis_column_for_person_table extends M
      */
     public function safeDown()
     {
-		$this->alterColumn('{{%person}}', 'snils', $this->integer(11)->notNull());
-		$this->alterColumn('{{%person}}', 'polis', $this->integer(14)->defaultValue(null));
-
-        return false;
+		$this->dropColumn('{{%person}}', 'snils');
+		$this->addColumn('{{%person}}', 'snils', $this->integer(11)->defaultValue(0));
+		$this->dropColumn('{{%person}}', 'polis');
+		$this->addColumn('{{%person}}', 'polis', $this->integer(14)->defaultValue(null));
     }
 
     /*
