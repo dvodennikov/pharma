@@ -20,7 +20,21 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'quantity')->textInput() ?>
 
-    <?= $form->field($model, 'unit_id')->textInput() ?>
+    <?php //echo $form->field($model, 'unit_id')->textInput() ?>
+    
+    <div class="form-group">
+		<label for="receipt-unit_id" class="control-label"><?= \Yii::t('app', 'Receipt') ?></label>
+		<select id="receipt-unit_id" name="Receipt[unit_id]" class="form-control">
+	<?php 
+		$units = \common\models\Unit::find()->all();
+		foreach ($units as $unit) :
+	?>
+		<option value="<?= $unit->id ?>" <?= ($model->unit_id == $unit->id)?'selected':'' ?>>
+	<?= $unit->title ?>
+		</option>
+	<?php endforeach; ?>
+		</select>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

@@ -31,7 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'title',
+            //'title',
+            [
+				'attribute'   => 'title',
+				'format'      => 'text',
+				'content'     => function($model) {
+					return \yii\helpers\Html::a($model->title, \yii\helpers\Url::to(['unit/update', 'id' => $model->id]));
+				}
+            ],
             'description',
             [
                 'class' => ActionColumn::className(),

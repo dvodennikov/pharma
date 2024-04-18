@@ -11,8 +11,6 @@ if (!isset($customField))
 	$customField = [];
 if (!isset($idx))
 	$idx = 0;
-/*if (!isset($id))
-	$id = 0;*/
 ?>
 
 <div class="control-group py-2">
@@ -28,7 +26,7 @@ if (!isset($idx))
 	       name="Document[custom_fields][<?= $idx ?>][value]" 
 	       class="form-control" 
 	       size="15"
-	       <?= isset($fieldParams['mask'])?('pattern="' . $fieldParams['mask'] . '"'):'' ?>
+	       <?= (isset($fieldParams['mask']) && ($fieldParams['mask'] != ''))?('pattern="' . $fieldParams['mask'] . '"'):'' ?>
 	       value="<?= isset($value)?$value:'' ?>"
 	       placeholder="<?= Yii::t('app', $fieldParams['title']) ?>">
 	<div class="help-block">

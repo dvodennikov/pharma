@@ -82,12 +82,11 @@ class DocumentController extends Controller
 				
 				$model->custom_fields = $custom_fields;*/
 				//$model->custom_fields = $customFields;
+				//$model->validate('custom_fields');
 				Document::parseCustomFields($model->custom_fields, $model->document_type, $model);
-				//throw new \yii\base\NotSupportedException(print_r($model->getErrors(), true));
 				
 				if (!$model->hasErrors() && $model->save()) {
 					if ((count($model->custom_fields) == 0) && (\common\models\DocumentType::getCustomFieldsCount($model->document_type) > 0)) {
-						//throw new \yii\base\NotSupportedException(print_r($model, true));
 						return $this->redirect(['update', 'id' => $model->id]);
 					}
 					
@@ -96,6 +95,19 @@ class DocumentController extends Controller
             }
         } else {
             $model->loadDefaultValues();
+            
+            $person_id = \Yii::$app->request->get('person_id', null);
+            if (!is_null($person_id)) {
+				$person = \common\models\Person::findOne(['id' => $person_id]);
+				
+				if (isset($person->id)) {
+					$model->person_id  = $person->id;
+					$model->surname    = $person->surname;
+					$model->name       = $person->name;
+					$model->secondname = $person->secondname;
+					$model->birthdate  = $person->birthdate;
+				}
+			}
         }
 
         return $this->render('create', [
@@ -184,7 +196,6 @@ class DocumentController extends Controller
 	{
 		$idx = (int) \Yii::$app->request->get('idx', 0);
 		$documentType = \common\models\DocumentType::findOne(['id' => $id]);
-		//throw new \yii\base\NotSupportedException(print_r($documentType, true));
 
 		$response = '';
 		foreach ($documentType->custom_fields as $customField) {
@@ -196,6 +207,32 @@ class DocumentController extends Controller
 		}
 		
 		return $response;
+	 }
+
+    /**
+	 * Return HTML for person list for Person model by surname, name, 
+	 * secondname and birthdate for AJAX request
+	 * @return string|\yii\web\Response
+	 */
+	public function actionGetPersons($id)
+	{
+		$person     = [];
+		$person['surname']    = \Yii::$app->request->get('surname', null);
+		$person['name']       = \Yii::$app->request->get('name', null);
+		$person['secondname'] = \Yii::$app->request->get('secondname', null);
+		$person['birthdate']  = \Yii::$app->request->get('birthdate', null);
+		
+		$model = $this->findModel($id);
+		
+		if (!isset($model->id))
+			throw new NotFoundHttpException(\Yii::t('app', 'Not found'));
+		
+		foreach ($person as $name => $field) {
+			//if (isset($field))
+				$model->$name = $field;
+		}
+
+		return $this->renderAjax('_person', ['model' => $model]);
 	 }
 
     /**
@@ -212,6 +249,6 @@ class DocumentController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
     }
 }

@@ -66,6 +66,12 @@ class Document extends \yii\db\ActiveRecord
     {
 		$customFields = $this->$attribute;
 		
+		if (is_null($customFields)) {
+			$this->$attribute = [];
+			
+			return;
+		}
+		
 		if (!is_array($customFields)) {
 			$this->addError($attribute, \Yii::t('app', 'Wrong format: ' . print_r($customFields, true)));
 			
@@ -83,7 +89,6 @@ class Document extends \yii\db\ActiveRecord
     {
 		if (is_null($documentTypeId)) 
 			return 	[];
-		//$validator->addError('customFields', Yii::t('app', 'Value of the field '));
 			
 		$documentType = \common\models\DocumentType::findOne(['id' => $documentTypeId]);
 		
@@ -91,7 +96,6 @@ class Document extends \yii\db\ActiveRecord
 			$customFieldsValidated = [];
 			foreach ($documentType->custom_fields as $fieldParams) {
 				foreach ($customFields as $customField) {
-					//$customField = get_object_vars($customField);
 					if ($customField['title'] == $fieldParams['title']) {
 						$customFieldsValidated[] = Document::parseCustomField($customField, $fieldParams['mask'], $validator);
 						
@@ -143,16 +147,15 @@ class Document extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['document_type', 'number', 'issue_date', 'issuer', 'surname', 'name'], 'required'],
-            [['document_type', 'number', 'second_name'], 'default', 'value' => null],
+            [['document_type', 'number', 'issue_date', 'issuer', 'surname', 'name', 'birthdate', 'custom_fields'], 'required'],
+            [['document_type', 'number', 'secondname', 'person_id'], 'default', 'value' => null],
             [['document_type', 'number', 'person_id'], 'integer'],
             //[['custom_fields'], 'safe'],
-            ['issue_date', 'validateDate'],
+            [['issue_date', 'birthdate'], 'validateDate'],
             ['expire_date', 'validateDate', 'params' => ['min' => $this->issue_date]],
             [['serial'], 'string', 'max' => 10],
-            [['surname', 'name', 'second_name', 'issuer'], 'string', 'max' => 255],
+            [['surname', 'name', 'secondname', 'issuer'], 'string', 'max' => 255],
             [['document_type'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::class, 'targetAttribute' => ['document_type' => 'id']],
-            //['customFields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
             ['custom_fields', 'validateCustomFields', 'params' => ['documentType' => $this->document_type], 'skipOnEmpty' => false, 'skipOnError' => false],
         ];
     }
@@ -180,7 +183,7 @@ class Document extends \yii\db\ActiveRecord
      * Convert custom_fields attribute from array of arrays to array of objects before save.
      * @return \common\models\queries\DocumentQuery the active query used by this AR class.
      */
-    public function beforeSave($insert)
+    /*public function beforeSave($insert)
     {
 		if (!parent::beforeSave($insert)) {
 			return false;
@@ -194,7 +197,7 @@ class Document extends \yii\db\ActiveRecord
 		$this->custom_fields = $custom_fields;
 		
 		return true;
-	}
+	}*/
 
     /**
      * Gets query for [[DocumentType]].

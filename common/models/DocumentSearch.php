@@ -18,7 +18,7 @@ class DocumentSearch extends Document
     {
         return [
             [['id', 'number'], 'integer'],
-            [['document_type', 'serial', 'issue_date', 'surname', 'name', 'second_name', 'issuer', 'expire_date', 'custom_fields'], 'safe'],
+            [['document_type', 'serial', 'issue_date', 'surname', 'name', 'secondname', 'issuer', 'expire_date', 'custom_fields'], 'safe'],
         ];
     }
 
@@ -75,7 +75,7 @@ class DocumentSearch extends Document
             ->andFilterWhere(['ilike', 'issuer', $this->issuer])
             ->andFilterWhere(['ilike', 'surname', $this->surname])
             ->andFilterWhere(['ilike', 'name', $this->name])
-            ->andFilterWhere(['ilike', 'second_name', $this->second_name])
+            ->andFilterWhere(['ilike', 'secondname', $this->secondname])
             //->andFilterWhere(['ilike', 'custom_fields', $this->custom_fields])
             ->andFilterWhere(['ilike', DocumentType::tableName() . '.title', $document_type]);
             

@@ -121,17 +121,17 @@ class Person extends \yii\db\ActiveRecord
      */
     public function getDocuments()
     {
-        return $this->hasMany(Document::class, ['id' => 'document_id'])->viaTable('person_document', ['person_id' => 'id']);
+        return $this->hasMany(Document::class, ['person_id' => 'id']);
     }
 
     /**
-     * Gets query for [[PersonDocuments]].
+     * Gets [[Documents]].
      *
-     * @return \yii\db\ActiveQuery|\common\models\queries\PersonDocumentQuery
+     * @return \common\models\Document
      */
-    public function getPersonDocuments()
+    public function getAllDocuments()
     {
-        return $this->hasMany(PersonDocument::class, ['person_id' => 'id']);
+        return $this->hasMany(Document::class, ['person_id' => 'id'])->all();
     }
 
     /**
@@ -151,5 +151,48 @@ class Person extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\queries\PersonQuery(get_called_class());
+    }
+    
+    /**
+     * Gets query for [[Persons]].
+     *
+     * @param array $person
+     * @return \yii\db\ActiveQuery|\common\models\queries\PersonQuery
+     */
+    public static function getPersonsBySurnameNameSecondnameBirthdate($person)
+    {
+		$query = new \common\models\queries\PersonQuery(get_called_class());
+
+		foreach (['surname', 'name', 'secondname'] as $field) {
+			if (isset($person[$field]))
+				$query->andFilterWhere(['ilike', $field, $person[$field]]);
+		}
+		
+		if (isset($person['birthdate']) && preg_match('/(\d{4}\-\d{2}\-\d{2})/', $person['birthdate'], $matches))
+			$query->andWhere(['birthdate' => $matches[1]]);
+
+		
+        return $query->all();
+    }
+    
+    /**
+     * Gets text representation for [[Persons]].
+     *
+     * @param int $id
+     * @return \yii\db\ActiveQuery|\common\models\queries\PersonQuery
+     */
+    public static function getPersonTextRepresentationById($id)
+    {
+		$query = new \common\models\queries\PersonQuery(get_called_class());
+		
+		if (!isset($id))
+			return \Yii::t('app', 'Person not found');
+			
+		$person = $query->andWhere(['id' => (int) $id])->one();
+		
+		if (!isset($person->id))
+			return \Yii::t('app', 'Person not found');
+		
+        return $person->surname . ' ' . $person->name . ' ' . (is_null($person->secondname)?'-':$person->secondname) . ' ' . $person->birthdate;
     }
 }

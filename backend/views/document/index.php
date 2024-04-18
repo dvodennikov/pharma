@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'number',
             'surname',
             'name',
-            'second_name',
+            'secondname',
             'issue_date',
             //'issuer',
             //'expire_date',

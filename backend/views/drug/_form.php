@@ -18,7 +18,21 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'measury')->textInput() ?>
 
-    <?= $form->field($model, 'measury_unit')->textInput() ?>
+    <?php //echo $form->field($model, 'measury_unit')->textInput() ?>
+    
+    <div class="form-group">
+		<label for="drug-measury_unit" class="control-label"><?= \Yii::t('app', 'Drug') ?></label>
+		<select id="drug-measury_unit" name="Drug[measury_unit]" class="form-control">
+	<?php 
+		$units = \common\models\Unit::find()->all();
+		foreach ($units as $unit) :
+	?>
+		<option value="<?= $unit->id ?>" <?= ($model->measury_unit == $unit->id)?'selected':'' ?>>
+	<?= $unit->title ?>
+		</option>
+	<?php endforeach; ?>
+		</select>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

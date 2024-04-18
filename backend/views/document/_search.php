@@ -28,7 +28,7 @@ use yii\widgets\ActiveForm;
     
     <?= $form->field($model, 'name') ?>
     
-    <?= $form->field($model, 'second_name') ?>
+    <?= $form->field($model, 'secondname') ?>
 
     <?= $form->field($model, 'number') ?>
 

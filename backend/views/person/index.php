@@ -31,7 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'surname',
+            //'surname',
+            [
+				'attribute' => 'surname',
+				'format'    => 'text',
+				'content'   => function($model) {
+					return \yii\helpers\Html::a($model->surname, \yii\helpers\Url::to(['person/update', 'id' => $model->id]));
+				}
+            ],
             'name',
             'secondname',
             'birthdate',

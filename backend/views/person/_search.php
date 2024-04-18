@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'secondname') ?>
 
-    <?= $form->field($model, 'birthdate') ?>
+    <?= $form->field($model, 'birthdate')->textInput(['type' => 'date']) ?>
 
     <?php // echo $form->field($model, 'snils') ?>
 

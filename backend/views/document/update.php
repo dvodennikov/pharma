@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var common\models\Document $model */
 
 $this->title = Yii::t('app', 'Update Document: {name}', [
-    'name' => $model->id,
+    'name' => $model->number,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Documents'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
