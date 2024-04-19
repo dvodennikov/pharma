@@ -23,12 +23,9 @@ use yii\widgets\ActiveForm;
     <?php //echo $form->field($model, 'unit_id')->textInput() ?>
     
     <div class="form-group">
-		<label for="receipt-unit_id" class="control-label"><?= \Yii::t('app', 'Receipt') ?></label>
+		<label for="receipt-unit_id" class="control-label"><?= \Yii::t('app', 'Unit') ?></label>
 		<select id="receipt-unit_id" name="Receipt[unit_id]" class="form-control">
-	<?php 
-		$units = \common\models\Unit::find()->all();
-		foreach ($units as $unit) :
-	?>
+	<?php foreach (\common\models\Unit::find()->all() as $unit) : ?>
 		<option value="<?= $unit->id ?>" <?= ($model->unit_id == $unit->id)?'selected':'' ?>>
 	<?= $unit->title ?>
 		</option>
