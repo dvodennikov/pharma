@@ -7,25 +7,22 @@ use Yii;
 /**
  * This is the model class for table "receipt".
  *
- * @property int $id
- * @property string|null $number
  * @property int $person_id
  * @property int $drug_id
  * @property int $quantity
- * @property int $unit_id
  *
  * @property Drug $drug
  * @property Person $person
  * @property Unit $unit
  */
-class Receipt extends \yii\db\ActiveRecord
+class ReceiptDrugs extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'receipt';
+        return 'receipt_drugs';
     }
 
     /**
@@ -42,10 +39,11 @@ class Receipt extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['person_id'], 'required'],
-            [['person_id'], 'default', 'value' => null],
-            [['person_id'], 'integer'],
-            [['number'], 'string', 'max' => 10],
+            [['person_id', 'drug_id'], 'required'],
+            [['person_id', 'drug_id', 'quantity'], 'integer'],
+            ['quantity', 'default', 'value' => 1],
+            [['drug_id'], 'exist', 'skipOnError' => true, 'targetClass' => Drug::class, 'targetAttribute' => ['drug_id' => 'id']],
+            [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
         ];
     }
 
@@ -55,20 +53,31 @@ class Receipt extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'number' => Yii::t('app', 'Number'),
             'person_id' => Yii::t('app', 'Person ID'),
+            'drug_id' => Yii::t('app', 'Drug ID'),
+            'quantity' => Yii::t('app', 'Quantity'),
         ];
     }
 
     /**
-     * Gets query for [[Person]].
+     * Gets query for [[Receipt]].
      *
-     * @return \yii\db\ActiveQuery|\common\models\queries\PersonQuery
+     * @return \yii\db\ActiveQuery|\common\models\queries\ReceiptQuery
      */
-    public function getPerson()
+    public function getReceipt()
     {
-        return $this->hasOne(Person::class, ['id' => 'person_id']);
+        return $this->hasOne(Receipt::class, ['id' => 'drug_id']);
+    }
+
+
+    /**
+     * Gets query for [[Drug]].
+     *
+     * @return \yii\db\ActiveQuery|\common\models\queries\DrugQuery
+     */
+    public function getDrug()
+    {
+        return $this->hasOne(Drug::class, ['id' => 'drug_id']);
     }
 
     /**
