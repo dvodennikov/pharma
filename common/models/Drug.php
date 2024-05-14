@@ -80,8 +80,21 @@ class Drug extends \yii\db\ActiveRecord
      */
     public function getReceipts()
     {
-        return $this->hasMany(Receipt::class, ['drug_id' => 'id']);
+        return $this->hasMany(ReceiptDrugs::class, ['drug_id' => 'id'])->leftJoin(Receipt::class, ['id' => 'drug_id']);
     }
+    
+    /**
+     * Get Drugs by Id
+     * @param integer[] $ids
+     * @return \common\models\Drug[]
+     */
+    public static function getDrugsById($ids)
+    {
+		if (!is_array($ids))
+			return [];
+
+		return Drug::find()->where(['id' => $ids])->indexBy('id')->all();
+	}
 
     /**
      * {@inheritdoc}

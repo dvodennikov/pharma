@@ -31,7 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'title',
+            //'title',
+            [
+				'attribute' => 'title',
+				'format'    => 'html',
+				'content'   => function($model) {
+					return Html::a($model->title, Url::to(['/drug/update', 'id' => $model->id]));
+				}
+            ],
             'description',
             'measury',
             'measury_unit',

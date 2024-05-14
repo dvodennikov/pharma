@@ -1,44 +1,37 @@
 <?php
 /** @var yii\web\View $this */
-/** @var array customField */
-/** @var int $id */
-/** @var int $idx */
+/** @var \common\models\DocumentType $model */
 
 use yii\helpers\Html;
 
-if (!isset($customField))
-	$customField = [];
-if (!isset($idx))
-	$idx = 0;
-if (!isset($id))
-	$id = 0;
 ?>
 
-<div class="control-group py-2">
-	<label for="DocumentType[custom_fields][<?= $idx ?>][title]">
-		<?= Yii::t('app', 'Title') ?>
-	</label>
-	<input type="text" 
-	       id="DocumentType[custom_fields][<?= $idx ?>][title]" 
-	       name="DocumentType[custom_fields][<?= $idx ?>][title]" 
-	       class="form-control" 
-	       size="15"
-	       value="<?= isset($customField['title'])?$customField['title']:'' ?>"
-	       placeholder="<?= Yii::t('app', 'Title') ?>">
-	<br>
-	<label for="DocumentType[custom_fields][<?= $idx ?>][mask]">
-		<?= Yii::t('app', 'Mask') ?>
-	</label>
-	<input type="text" 
-	       id="DocumentType[custom_fields][<?= $idx ?>][mask]" 
-	       name="DocumentType[custom_fields][<?= $idx ?>][mask]" 
-	       class="form-control" 
-	       size="5"
-	       value="<?= isset($customField['mask'])?$customField['mask']:'' ?>"
-	       placeholder="<?= Yii::t('app', 'Mask') ?>">
-	<br>
-	<?= Html::submitButton(Yii::t('app', 'Delete field'), [
-		'class' => 'delete-custom-field btn btn-danger', 
-		'formaction' => '/document-type/delete-custom-field?id=' . $id . '&idx=' . $idx
-	]) ?>
-</div>
+<input type="hidden" value="<?= json_encode($model->custom_fields) ?>">
+    
+    <div id="custom-fields" class="form-group my-3">
+		<h3><?= Yii::t('app', 'Custom fields') ?>:</h3>
+		
+	<?php if ($model->hasErrors('custom_fields')) : ?>
+		<div class="alert alert-danger"><?= $model->getFirstError('custom_fields') ?></div>
+	<?php endif; ?>
+    <?php
+		//if (!is_null($customFields) && is_array($customFields)) :
+		if (!is_null($model->custom_fields) && is_array($model->custom_fields)) :
+			$idx = -1;
+			foreach ($model->custom_fields as $customField) :
+				if (!is_array($customField))// || is_null($customField->title))
+					continue;
+				$idx++;
+				
+				echo $this->render('_custom_field', [
+					'model'       => $model,
+					'customField' => $customField,
+					'idx'         => $idx,
+					'id'          => $model->id
+				]);
+			
+			endforeach;
+		endif;
+    ?>
+    </div>
+

@@ -10,9 +10,6 @@ use Yii;
  * @property int $id
  * @property string|null $number
  * @property int $person_id
- * @property int $drug_id
- * @property int $quantity
- * @property int $unit_id
  *
  * @property Drug $drug
  * @property Person $person
@@ -20,6 +17,7 @@ use Yii;
  */
 class Receipt extends \yii\db\ActiveRecord
 {
+	public $drugs;
     /**
      * {@inheritdoc}
      */

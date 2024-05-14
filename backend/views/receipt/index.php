@@ -26,24 +26,51 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'filterModel'  => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
             'number',
-            'person_id',
-            'drug_id',
-            'quantity',
-            //'unit_id',
+            //'person_id',
             [
-                'class' => ActionColumn::className(),
+				'attribute' => 'person_id',
+				'format'    => 'html',
+				'content'   => function($model) {
+					return Html::a(\common\helpers\Pharma::getTextRepresentationForPerson($model->person),
+						           Url::to(['receipt/update', 'id' => $model->id]));
+				}
+            ],
+            [
+				'attribute' => 'snils',
+				'format'    => 'text',
+				'content'   => function($model) {
+					return $model->person->snils;
+				}
+            ],
+            [
+				'attribute' => 'drugs',
+				'format'    => 'html',
+				'content'   => function($model) {
+					if (!is_array($model->drugs) || (count($model->drugs) == 0))
+						return '';
+						
+					$html = '<ul>';
+					foreach ($model->drugs as $drug) 
+						$html .= '<li>' . $drug . '</li>';
+						
+					return $html . '</ul>';
+				}
+            ],
+            [
+                'class'      => ActionColumn::className(),
                 'urlCreator' => function ($action, Receipt $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],
         ],
     ]); ?>
+<?php var_dump($dataProvider->getModels()) ?>
 
     <?php Pjax::end(); ?>
 

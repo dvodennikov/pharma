@@ -1,11 +1,14 @@
 <?php
+/** @var yii\web\View $this */
+/** @var common\models\Receipt $model */
+/** @var yii\widgets\ActiveForm $form */
+/** @var common\models\ReceiptDrugs[] $receiptDrugs */
+/** @var string $searchPerson */
+/** @var string $searchDrug */
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/** @var yii\web\View $this */
-/** @var common\models\Receipt $model */
-/** @var yii\widgets\ActiveForm $form */
 ?>
 
 <div class="receipt-form">
@@ -14,27 +17,26 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'number')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'person_id')->textInput() ?>
-
-    <?= $form->field($model, 'drug_id')->textInput() ?>
-
-    <?= $form->field($model, 'quantity')->textInput() ?>
-
-    <?php //echo $form->field($model, 'unit_id')->textInput() ?>
+    <?php //echo $form->field($model, 'person_id')->textInput() ?>
+ 
+    <?= $this->render('_persons', [
+		'model'        => $model,
+		'searchPerson' => $searchPerson
+	]) ?>
     
-    <div class="form-group">
-		<label for="receipt-unit_id" class="control-label"><?= \Yii::t('app', 'Unit') ?></label>
-		<select id="receipt-unit_id" name="Receipt[unit_id]" class="form-control">
-	<?php foreach (\common\models\Unit::find()->all() as $unit) : ?>
-		<option value="<?= $unit->id ?>" <?= ($model->unit_id == $unit->id)?'selected':'' ?>>
-	<?= $unit->title ?>
-		</option>
-	<?php endforeach; ?>
-		</select>
-    </div>
+	<?= $this->render('_drugs', [
+		'model'        => $model,
+		'receiptDrugs' => $receiptDrugs,
+		'searchDrug'   => $searchDrug
+	]) ?>
+
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('app', 'Save'), [
+			'class' => 'btn btn-success', 
+			'formaction' => '/receipt/' . (isset($model->id)?('update?id=' . $model->id):'create')
+		]) ?>
+		<?= Html::a(Yii::t('app', 'Cancel'), \yii\helpers\Url::to(['/receipt']), ['class' => 'btn btn-danger']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

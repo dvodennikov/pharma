@@ -11,17 +11,35 @@ use common\models\Receipt;
  */
 class ReceiptSearch extends Receipt
 {
+	public $snils;
+	public $drugs;
+	
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'person_id', 'drug_id', 'quantity', 'unit_id'], 'integer'],
-            [['number'], 'safe'],
+            [['id'], 'integer'],
+            [['person_id'], 'string', 'max' => 255],
+            [['snils'], 'string', 'max' => 11],
+            [['number'], 'string', 'max' => 10],
+            [['drugs'], 'string', 'max' => 255],
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels() {
+		$labels = parent::attributeLabels();
+		
+		$labels['snils'] = \Yii::t('app', 'SNILS');
+		$labels['person_id'] = \Yii::t('app', 'Person');
+		
+		return $labels;
+	}
+    
     /**
      * {@inheritdoc}
      */
@@ -41,12 +59,14 @@ class ReceiptSearch extends Receipt
     public function search($params)
     {
         $query = Receipt::find();
-
+		
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        
+        $query->joinWith('person');
 
         $this->load($params);
 
@@ -59,13 +79,44 @@ class ReceiptSearch extends Receipt
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'person_id' => $this->person_id,
-            'drug_id' => $this->drug_id,
-            'quantity' => $this->quantity,
-            'unit_id' => $this->unit_id,
+            //'person_id' => $this->person_id,
         ]);
 
-        $query->andFilterWhere(['ilike', 'number', $this->number]);
+        $query->andFilterWhere(['ILIKE', 'number', $this->number]);
+        
+        if (isset($this->person_id))
+			$query->andFilterWhere(['OR', ['ILIKE', 'person.surname', $this->person_id], ['ILIKE', 'person.name', $this->person_id], ['ILIKE', 'person.secondname', $this->person_id]]);
+
+        if (isset($this->snils))
+			$query->andFilterWhere(['ILIKE', 'person.snils', $this->snils]);
+			
+		if (isset($this->drugs) && ($this->drugs != '')) {
+			$receiptDrugs = \common\models\ReceiptDrugs::find()->joinWith('drug')->where(['ILIKE', 'drug.title', $this->drugs])->all();
+			$receiptIds = [];
+			
+			foreach ($receiptDrugs as $receiptDrug)
+				$receiptIds[] = $receiptDrug->receipt_id;
+			
+			$query->andFilterWhere(['IN', 'receipt.id', $receiptIds]);
+		}
+			
+		// get data for drugs column of the receipts
+		$receipts    = $dataProvider->getModels();
+		$receiptIds = [];
+		foreach ($receipts as $receipt) {
+			$receiptIds[] = $receipt->id;
+		}
+		
+		$receiptDrugs = \common\models\ReceiptDrugs::find()->joinWith('drug')->where(['IN', 'receipt_id', $receiptIds])/*->indexBy('receipt_id')*/->all();
+		//throw new \yii\base\NotSupportedException(print_r($receiptDrugs, true));
+		foreach ($receipts as &$receipt) {
+			$receipt->drugs = [];
+			if (isset($receiptDrugs[$receipt->id]))
+			foreach ($receiptDrugs as $receiptDrug)
+				if ($receiptDrug->receipt_id == $receipt->id)
+					$receipt->drugs[] = $receiptDrug->drug->title . ': ' . $receiptDrug->quantity;
+		}
+		//throw new \yii\base\NotSupportedException(print_r($receipts, true));
 
         return $dataProvider;
     }

@@ -4,8 +4,10 @@ namespace backend\controllers;
 
 use common\models\Receipt;
 use common\models\ReceiptSearch;
+use common\models\ReceiptDrugs;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
 /**
@@ -21,6 +23,15 @@ class ReceiptController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+				'access' => [
+	                'class' => AccessControl::class,
+	                'rules' => [
+	                    [
+	                        'allow' => true,
+	                        'roles' => ['@'],
+	                    ],
+	                ],
+	            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -42,7 +53,7 @@ class ReceiptController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -70,7 +81,24 @@ class ReceiptController extends Controller
         $model = new Receipt();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+			$receiptDrugs      = ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs', $model);
+			
+			foreach ($receiptDrugs as $receiptDrug)
+				if ($receiptDrug->hasErrors()) {
+					$errors = $receiptDrug->getFirstErrors();
+					$model->addError('drugs', array_shift($errors));
+					
+					break;
+				}
+			//throw new \yii\base\NotSupportedException(print_r($receiptDrugs, true));
+					
+            if ($model->load($this->request->post()) && !$model->hasErrors() && $model->save()) {
+				foreach ($receiptDrugs as &$receiptDrug) {
+					$receiptDrug->receipt_id = $model->getPrimaryKey();
+					//throw new \yii\base\NotSupportedException(print_r($receiptDrug, true));
+					$receiptDrug->save();
+				}
+				
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -78,7 +106,8 @@ class ReceiptController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'model'        => $model,
+            'receiptDrugs' => [],
         ]);
     }
 
@@ -93,12 +122,53 @@ class ReceiptController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+			$receiptDrugs      = ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs', $model);
+			//throw new \yii\base\NotSupportedException(print_r($receiptDrugs, true));
+			
+			foreach ($receiptDrugs as $receiptDrug)
+				if ($receiptDrug->hasErrors()) {
+					$errors = $receiptDrug->getFirstErrors();
+					$model->addError('drugs', array_shift($errors));
+					
+					return $this->render('update', [
+						'model'        => $model,
+						'receiptDrugs' => $receiptDrugs,
+					]);
+				}
+			
+			if (!$model->hasErrors() && $model->save()) {
+				$receiptId      = $model->getPrimaryKey();
+				$drugIds        = [];
+				//$receiptDrugsDb = ReceiptDrugs::find()->where(['receipt_id' => $receiptId])->indexBy('id')->all();
+				foreach ($receiptDrugs as &$receiptDrug) {
+					/*if (isset($receiptDrug->id) && isset($receiptDrugsDb[$receiptDrug->id])) {
+						$receiptDrugDb = &$receiptDrugsDb[$receiptDrug->id];
+						$receiptDrugDb->quantity = $receiptDrug->quantity;
+						
+						$receiptDrugDb->save();
+						
+						$drugIds[] = $receiptDrugDb->id;
+					} else {*/
+						$receiptDrug->receipt_id = $receiptId;
+						//throw new \yii\base\NotSupportedException(print_r($receiptDrug, true));
+						$receiptDrug->save();
+						
+						$drugIds[] = $receiptDrug->getPrimaryKey();
+					//}
+				}
+				
+				ReceiptDrugs::deleteAll(['AND', 'receipt_id=:receipt_id', ['NOT', ['IN', 'id', $drugIds]]], ['receipt_id' => $receiptId]);
+				
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
         }
 
+		$receiptDrugs = ReceiptDrugs::find()->where(['receipt_id' => $model->id])->with('drug')->all();
+
         return $this->render('update', [
-            'model' => $model,
+            'model'        => $model,
+            'receiptDrugs' => $receiptDrugs,
         ]);
     }
 
@@ -111,10 +181,186 @@ class ReceiptController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        
+        if (isset($model)) {
+			$modelId = $model->id;
+        
+			if ($model->delete())
+				ReceiptDrugs::deleteAll(['receipt_id' => $modelId]);
+		}
 
         return $this->redirect(['index']);
     }
+    
+    /**
+     * Search person for the form
+     * @return string|\yii\web\Response
+     */
+    public function actionSearchPerson()
+    {
+		$id           = $this->request->get('id');
+		$model        = isset($id)?$this->findModel((int) $id):new Receipt();
+		$searchPerson = $this->request->post('person_search');
+		$searchDrug   = $this->request->post('drug_search');
+		
+		if ($this->request->isPost && $model->load($this->request->post())) {
+			return $this->render(isset($model->id)?'update':'create', [
+				'model'        => $model,
+				'receiptDrugs' => ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs'),
+				'searchPerson' => $searchPerson,
+				'searchDrug'   => $searchDrug,
+			]);
+		}
+		
+		return $this->redirect([isset($id)?'update':'create']);
+	}
+	
+	/**
+	 * Get Persons list for AJAX
+	 * @return string|\yii\webResponse
+	 */
+	public function actionGetPersons() 
+	{
+		$id           = $this->request->get('id');
+		$model        = isset($id)?$this->findModel((int) $id):new Receipt();
+		$searchPerson = $this->request->get('person_search');
+		
+		return $this->renderAjax('_person', [
+			'model'        => $model,
+			'searchPerson' => $searchPerson,
+		]);
+	}
+	
+	/**
+	 * Add drug to ReceiptDrugs to the Receipt model
+	 */
+	public function actionAddDrug()
+	{
+		$id    = $this->request->get('id');
+		$model = isset($id)?$this->findModel((int) $id):new Receipt();
+		
+		if ($this->request->isPost && $model->load($this->request->post())) {
+			$receiptDrugs = ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs');
+			$newDrug      = ReceiptDrugs::loadReceiptDrug('AddDrug');
+			$searchDrug   = $this->request->post('drug_search');
+			$searchPerson = $this->request->post('person_search');
+			
+			if (!$newDrug->hasErrors()) 
+				$receiptDrugs[] = $newDrug;
+
+			return $this->render(isset($model->id)?'update':'create', [
+				'model'        => $model,
+				'receiptDrugs' => $receiptDrugs,
+				'searchDrug'   => $searchDrug,
+				'searchPerson' => $searchPerson,
+			]);
+		}
+		
+		return $this->redirect([isset($id)?'update':'create']);
+
+	}
+	
+	/**
+	 * Add drug to ReceiptDrugs to the Receipt model for AJAX
+	 * @return string|\yii\webResponse
+	 */
+	public function actionGetNewDrug()
+	{
+		$receiptDrug = new ReceiptDrugs();
+		$idx         = $this->request->get('idx', 0);
+		$drugId      = $this->request->get('drug_id');
+		$quantity    = $this->request->get('quantity', 1);
+
+		if (isset($drugId)) {
+			$drug = \common\models\Drug::find()->where(['id' => $drugId])->one();
+		//throw new \yii\base\NotSupportedException(print_r($drug, true));
+			
+			if (isset($drug->id)) {
+				$receiptDrug->drug_id            = $drug->id;
+				$receiptDrug->quantity           = $quantity;
+				$receiptDrug->drug->id           = $drug->id;
+				$receiptDrug->drug->title        = $drug->title;
+				$receiptDrug->drug->description  = $drug->description;
+				$receiptDrug->drug->measury      = $drug->measury;
+				$receiptDrug->drug->measury_unit = $drug->measury_unit;
+			}
+		}
+		
+		return $this->renderAjax('_drug', [
+			'receiptDrug' => $receiptDrug,
+			'idx'         => $idx,
+		]);
+	}
+	
+	/**
+	 * Delete drug from ReceiptDrugs of the Receipt model by index
+	 * @return string|\yii\webResponse
+	 */
+	public function actionDeleteDrug()
+	{
+		$id    = $this->request->get('id');
+		$model = isset($id)?$this->findModel((int) $id):new Receipt();
+		$idx   = $this->request->get('idx');
+		
+		if ($this->request->isPost && $model->load($this->request->post())) {
+			$receiptDrugs = ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs');
+			$searchDrug   = $this->request->post('drug_search');
+			$searchPerson = $this->request->post('person_search');
+			
+			if (isset($idx)) 
+				array_splice($receiptDrugs, $idx, 1);
+
+			return $this->render(isset($model->id)?'update':'create', [
+				'model'        => $model,
+				'receiptDrugs' => $receiptDrugs,
+				'searchDrug'   => $searchDrug,
+				'searchPerson' => $searchPerson,
+			]);
+		}
+		
+		return $this->redirect([isset($id)?'update':'create']);
+
+	}
+
+    /**
+     * Search drug for the form
+     * @return string|\yii\web\Response
+     */
+    public function actionSearchDrug()
+    {
+		$id           = $this->request->get('id');
+		$model        = isset($id)?$this->findModel((int) $id):new Receipt();
+		$searchDrug   = $this->request->post('drug_search');
+		$searchPerson = $this->request->post('person_search');
+		
+		if ($this->request->isPost && $model->load($this->request->post())) {
+			return $this->render(isset($model->id)?'update':'create', [
+				'model'        => $model,
+				'receiptDrugs' => ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs'),
+				'searchDrug'   => $searchDrug,
+				'searchPerson' => $searchPerson,
+			]);
+		}
+		
+		return $this->redirect([isset($id)?'update':'create']);
+	}
+	
+	/**
+	 * Get Drugs list for AJAX
+	 * @return string|\yii\webResponse
+	 */
+	public function actionGetSearchDrugs() 
+	{
+		$id         = $this->request->get('id');
+		$model      = isset($id)?$this->findModel((int) $id):new Receipt();
+		$searchDrug = $this->request->get('drug_search');
+		
+		return $this->renderAjax('_search_drugs', [
+			'model'      => $model,
+			'searchDrug' => $searchDrug,
+		]);
+	}
 
     /**
      * Finds the Receipt model based on its primary key value.

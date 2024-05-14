@@ -43,7 +43,7 @@ class DocumentType extends \yii\db\ActiveRecord
 		$customFields = $this->$attribute;
 		
 		if (!is_array($customFields)) {
-			$this->addError($attribute, \Yii::t('app', 'Wrong format: ' . print_r($customFields, true)));
+			$this->addError($attribute, \Yii::t('app', 'Wrong format: {format}', ['format' => print_r($customFields, true)]));
 			
 			return;
 		}

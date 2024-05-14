@@ -5,6 +5,10 @@
 use yii\helpers\Html;
 ?>
 
+<div class="form-group field-document-person_id">
+	<label for="Document[person_id]"><?= \Yii::t('app', 'Person') ?></label>
+	<select id="Document[person_id]" class="form-control person-id" name="Document[person_id]">
+		
     <?php $persons = common\models\Person::getPersonsBySurnameNameSecondnameBirthdate([ 
 			'surname'    => $model->surname, 
 			'name'       => $model->name,
@@ -28,3 +32,6 @@ use yii\helpers\Html;
 	<?php endif; ?>
 		<option value=""><?= Yii::t('app', 'Not found') ?></option>
     <?php endif; ?>
+	</select>
+		<div class="help-block"></div>
+</div>

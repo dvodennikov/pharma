@@ -50,11 +50,11 @@ class Document extends \yii\db\ActiveRecord
 		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
 			if (isset($params['min'])) {
 				if (self::dateToTimestamp($date) < self::dateToTimestamp($params['min'])) {
-					$this->addError($attribute, \Yii::t('app', 'Date ' . $date . ' must be greater than or equal to ' . $params['min']));
+					$this->addError($attribute, \Yii::t('app', 'Date {date} must be greater than or equal to {min}', ['date' => $date, 'min' => $params['min']]));
 				}
 			}
 		} else {
-			$this->addError($attribute, \Yii::t('app', 'Wrong date: ' . $date));
+			$this->addError($attribute, \Yii::t('app', 'Wrong date: {date}', ['date' => $date]));
 		}
 	}
     
@@ -73,7 +73,7 @@ class Document extends \yii\db\ActiveRecord
 		}
 		
 		if (!is_array($customFields)) {
-			$this->addError($attribute, \Yii::t('app', 'Wrong format: ' . print_r($customFields, true)));
+			$this->addError($attribute, \Yii::t('app', 'Wrong format: {format}', ['format' => print_r($customFields, true)]));
 			
 			return;
 		}
@@ -132,7 +132,8 @@ class Document extends \yii\db\ActiveRecord
 		}
 		
 		if (!is_null($validator)) {
-			$validator->addError('custom_fields', Yii::t('app', 'Value of the field ' . $customField['title'] . ' does not match mask ' . $mask));
+			$validator->addError('custom_fields', 
+				Yii::t('app', 'Value of the field {field} does not match mask {mask}', [ 'field' => $customField['title'], 'mask' => $mask]));
 		}
 		
 		return [

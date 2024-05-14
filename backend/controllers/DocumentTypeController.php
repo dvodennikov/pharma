@@ -6,6 +6,7 @@ use common\models\DocumentType;
 use common\models\DocumentTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
 /**
@@ -21,6 +22,15 @@ class DocumentTypeController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+				'access' => [
+	                'class' => AccessControl::class,
+	                'rules' => [
+	                    [
+	                        'allow' => true,
+	                        'roles' => ['@'],
+	                    ],
+	                ],
+	            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -205,10 +215,12 @@ class DocumentTypeController extends Controller
 	 public function actionGetNewCustomField()
 	 {
 		 $idx = (int) \Yii::$app->request->get('idx', 0);
+		 $id  = (int) \Yii::$app->request->get('id', 0);
 		 
-		 return $this->renderAjax('_custom_fields', [
+		 return $this->renderAjax('_custom_field', [
 			'customField' => [],
 			'idx'         => $idx,
+			'id'          => $id
 		 ]);
 	 }
 

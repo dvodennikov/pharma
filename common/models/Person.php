@@ -172,7 +172,7 @@ class Person extends \yii\db\ActiveRecord
 			$query->andWhere(['birthdate' => $matches[1]]);
 
 		
-        return $query->all();
+        return $query->limit(100)->all();
     }
     
     /**

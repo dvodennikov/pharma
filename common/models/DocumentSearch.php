@@ -80,10 +80,11 @@ class DocumentSearch extends Document
             ->andFilterWhere(['ilike', DocumentType::tableName() . '.title', $document_type]);
             
         if (isset($this->custom_fields) && (strlen($this->custom_fields) > 0)) {
-            if (stripos(\Yii::$app->db->dsn, 'psql') >= 0) {
+			$db = Document::getDb();
+            if (stripos($db->dsn, 'pgsql') !== false) {
 				$query->andWhere('jsonb_path_query_array(' . Document::tableName() . '.custom_fields, \'$[*].title\')::text LIKE :text', ['text' => '%' . $this->custom_fields . '%'])
 				      ->orWhere('jsonb_path_query_array(' . Document::tableName() . '.custom_fields, \'$[*].value\')::text LIKE :text', ['text' => '%' . $this->custom_fields . '%']);
-			} elseif (stripos(\Yii::$app->db->dsn, 'mysql') >= 0) {
+			} elseif (stripos($db->dsn, 'mysql') !== false) {
 				$query->andWhere('JSON_SEARCH(' . Document::tableName() . '.custom_fields, \'all\', :text) IS NOT NULL', ['text' => '%' . $this->custom_fields . '%']);
 			}
         }
