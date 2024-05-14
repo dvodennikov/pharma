@@ -28,6 +28,12 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
+    
+    const SCENARIO_UPDATE = 'update';
+    
+    public $password;
+    public $password_repeat;
+    public $role;
 
 
     /**
@@ -47,6 +53,16 @@ class User extends ActiveRecord implements IdentityInterface
             TimestampBehavior::class,
         ];
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function scenarios() 
+    {
+		return array_merge(parent::scenarios(), [
+			self::SCENARIO_UPDATE => ['username', 'email', 'password', 'password_repeat'],
+		]);
+	}
 
     /**
      * {@inheritdoc}
@@ -56,6 +72,12 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            ['username', 'string', 'length' => [4, 255]],
+			['email', 'email'],
+			[['username', 'email'], 'unique'],
+			[['password', 'password_repeat'], 'string', 'length' => [\Yii::$app->params['user.passwordMinLength'], 255]],
+			['password', 'compare', 'compareAttribute' => 'password_repeat'],
+            ['role', 'string'],
         ];
     }
 
@@ -210,4 +232,43 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+    
+    /**
+     * Generate password hash and auth key for user
+     */
+    public function afterValidate()
+	{
+		parent::afterValidate();
+		
+		if ($this->password) {
+			$this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+			$this->auth_key = Yii::$app->security->generateRandomString();
+		}
+	}
+	
+	/**
+	 * Set role
+	 */
+	public function setRole($flushRoles = false)
+	{
+		$auth = \Yii::$app->authManager;
+		
+		if ($flushRoles)
+			$auth->revokeAll($this->id);
+			
+		$role = $auth->getRole($this->role);
+		if (isset($role))
+			$auth->assign($role, $this->id);
+	}
+	
+	/*
+	 * Get user role
+	 * @return yii\rbac\Role
+	 */
+	public function getRole() 
+	{
+		$auth = \Yii::$app->authManager;
+		
+		return array_key_first($auth->getRolesByUser($this->id));
+	}
 }

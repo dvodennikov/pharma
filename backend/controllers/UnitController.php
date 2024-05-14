@@ -25,10 +25,25 @@ class UnitController extends Controller
 				'access' => [
 	                'class' => AccessControl::class,
 	                'rules' => [
-	                    [
+	                    /*[
 	                        'allow' => true,
 	                        'roles' => ['@'],
-	                    ],
+	                    ],*/
+	                    [
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createUnit', 'updateUnit'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['create'],
+							'roles' => ['createUnit'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['update', 'delete'],
+							'roles' => ['updateUnit'],
+						],
 	                ],
 	            ],
                 'verbs' => [

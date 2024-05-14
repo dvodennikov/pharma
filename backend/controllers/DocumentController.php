@@ -25,10 +25,36 @@ class DocumentController extends Controller
 				'access' => [
 	                'class' => AccessControl::class,
 	                'rules' => [
-	                    [
+	                    /*[
 	                        'allow' => true,
 	                        'roles' => ['@'],
-	                    ],
+	                    ],*/
+	                    [
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createDocument', 'updateDocument'],
+						],
+						[
+							'allow' => true,
+							'actions' => [
+								'create', 
+								'refresh', 
+								'get-custom-fields', 
+								'get-persons'
+							],
+							'roles' => ['createDocument'],
+						],
+						[
+							'allow' => true,
+							'actions' => [
+								'update', 
+								'delete',
+								'refresh', 
+								'get-custom-fields', 
+								'get-persons'
+								],
+							'roles' => ['updateDocument'],
+						],
 	                ],
 	            ],
                 'verbs' => [

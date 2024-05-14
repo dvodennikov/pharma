@@ -25,10 +25,38 @@ class DocumentTypeController extends Controller
 				'access' => [
 	                'class' => AccessControl::class,
 	                'rules' => [
-	                    [
+	                    /*[
 	                        'allow' => true,
 	                        'roles' => ['@'],
-	                    ],
+	                    ],*/
+	                    [
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createDocumentType', 'updateDocumentType'],
+						],
+						[
+							'allow' => true,
+							'actions' => [
+								'create', 
+								'add-custom-fields', 
+								'delete-custom-field', 
+								'get-new-custom-field', 
+								'get-custom-fields'
+							],
+							'roles' => ['createDocumentType'],
+						],
+						[
+							'allow' => true,
+							'actions' => [
+								'update', 
+								'delete', 
+								'add-custom-fields', 
+								'delete-custom-field',
+								'get-new-custom-field', 
+								'get-custom-fields'
+							],
+							'roles' => ['updateDocumentType'],
+						],
 	                ],
 	            ],
                 'verbs' => [

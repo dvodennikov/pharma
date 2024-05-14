@@ -25,10 +25,25 @@ class PersonController extends Controller
 				'access' => [
 	                'class' => AccessControl::class,
 	                'rules' => [
-	                    [
+	                    /*[
 	                        'allow' => true,
 	                        'roles' => ['@'],
-	                    ],
+	                    ],*/
+	                    [
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createPerson', 'updatePerson'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['create'],
+							'roles' => ['createPerson'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['update', 'delete'],
+							'roles' => ['updatePerson'],
+						],
 	                ],
 	            ],
                 'verbs' => [

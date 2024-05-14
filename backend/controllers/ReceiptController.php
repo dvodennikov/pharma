@@ -26,10 +26,44 @@ class ReceiptController extends Controller
 				'access' => [
 	                'class' => AccessControl::class,
 	                'rules' => [
-	                    [
+	                    /*[
 	                        'allow' => true,
 	                        'roles' => ['@'],
-	                    ],
+	                    ],*/
+	                    [
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createReceipt', 'updateReceipt'],
+						],
+						[
+							'allow' => true,
+							'actions' => [
+								'create',
+								'search-person',
+								'get-persons',
+								'add-drug',
+								'get-new-drug',
+								'delete-drug',
+								'search-drug',
+								'get-search-drugs'
+							],
+							'roles' => ['createReceipt'],
+						],
+						[
+							'allow' => true,
+							'actions' => [
+								'update', 
+								'delete',
+								'search-person',
+								'get-persons',
+								'add-drug',
+								'get-new-drug',
+								'delete-drug',
+								'search-drug',
+								'get-search-drugs'
+							],
+							'roles' => ['updateReceipt'],
+						],
 	                ],
 	            ],
                 'verbs' => [

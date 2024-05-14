@@ -25,10 +25,25 @@ class DrugController extends Controller
 				'access' => [
 	                'class' => AccessControl::class,
 	                'rules' => [
-	                    [
+	                    /*[
 	                        'allow' => true,
 	                        'roles' => ['@'],
-	                    ],
+	                    ],*/
+	                    [
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createDrug', 'updateDrug'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['create'],
+							'roles' => ['createDrug'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['update', 'delete'],
+							'roles' => ['updateDrug'],
+						],
 	                ],
 	            ],
                 'verbs' => [
