@@ -65,6 +65,9 @@ class PersonController extends Controller
     {
         $searchModel = new PersonSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        
+        if (isset(\Yii::$app->params['pageSize']))
+			$dataProvider->pagination->pageSize = (int) \Yii::$app->params['pageSize'];
 
         return $this->render('index', [
             'searchModel' => $searchModel,

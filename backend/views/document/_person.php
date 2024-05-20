@@ -9,12 +9,15 @@ use yii\helpers\Html;
 	<label for="Document[person_id]"><?= \Yii::t('app', 'Person') ?></label>
 	<select id="Document[person_id]" class="form-control person-id" name="Document[person_id]">
 		
-    <?php $persons = common\models\Person::getPersonsBySurnameNameSecondnameBirthdate([ 
-			'surname'    => $model->surname, 
-			'name'       => $model->name,
-			'secondname' => $model->secondname,
-			'birthdate'  => $model->birthdate
-		]);
+    <?php 
+		$persons = [];
+		if (isset($model->surname) || isset($model->name) || isset($model->secondname) || isset($model->birthdate))
+			$persons = common\models\Person::getPersonsBySurnameNameSecondnameBirthdate([ 
+				'surname'    => $model->surname, 
+				'name'       => $model->name,
+				'secondname' => $model->secondname,
+				'birthdate'  => $model->birthdate
+			]);
 		//init model by first person selected
 		if (!isset($model->person_id) && isset($persons[0])) {
 			$model->person_id = $persons[0]->id;
@@ -28,6 +31,10 @@ use yii\helpers\Html;
     <?php if (isset($model->person_id)) : ?>
 		<option value="<?= $model->person_id ?>" selected>
 			<?= htmlspecialchars(common\models\Person::getPersonTextRepresentationById($model->person_id)) ?>
+		</option>
+	<?php else : ?>
+		<option>
+			<?= \Yii::t('app', 'Fill surname, name, secondname and birthdate fields and press refresh button') ?>
 		</option>
 	<?php endif; ?>
 		<option value=""><?= Yii::t('app', 'Not found') ?></option>

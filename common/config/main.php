@@ -16,4 +16,5 @@ return [
 			'appendTimestamp' => true,
         ],
     ],
+    'name' => 'Pharma',
 ];

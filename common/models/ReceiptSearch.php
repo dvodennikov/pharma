@@ -66,6 +66,9 @@ class ReceiptSearch extends Receipt
             'query' => $query,
         ]);
         
+        if (isset(\Yii::$app->params['pageSize']))
+			$dataProvider->pagination->pageSize = (int) \Yii::$app->params['pageSize'];
+        
         $query->joinWith('person');
 
         $this->load($params);

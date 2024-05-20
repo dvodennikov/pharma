@@ -2,17 +2,18 @@
 
 namespace backend\controllers;
 
-use common\models\Unit;
-use common\models\UnitSearch;
+use common\models\User;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use Yii;
 
 /**
- * UnitController implements the CRUD actions for Unit model.
+ * UserController implements the CRUD actions for User model.
  */
-class UnitController extends Controller
+class UserController extends Controller
 {
     /**
      * @inheritDoc
@@ -22,83 +23,101 @@ class UnitController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-				'access' => [
-	                'class' => AccessControl::class,
-	                'rules' => [
-	                    /*[
-	                        'allow' => true,
-	                        'roles' => ['@'],
-	                    ],*/
-	                    [
-							'allow' => true,
-							'actions' => ['index', 'view'],
-							'roles' => ['createUnit', 'updateUnit'],
-						],
-						[
-							'allow' => true,
-							'actions' => ['create'],
-							'roles' => ['createUnit'],
-						],
-						[
-							'allow' => true,
-							'actions' => ['update', 'delete'],
-							'roles' => ['updateUnit'],
-						],
-	                ],
-	            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+					'class' => AccessControl::className(),
+					'rules' => [
+						//~ [
+							//~ 'allow' => true,
+							//~ 'roles' => ['@'],
+						//~ ],
+						[
+							'allow' => true,
+							'actions' => ['index', 'view'],
+							'roles' => ['createUser', 'updateUser'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['create'],
+							'roles' => ['createUser'],
+						],
+						[
+							'allow' => true,
+							'actions' => ['update', 'delete'],
+							'roles' => ['updateUser'],
+						],
+					],
+                ],
             ]
         );
     }
 
     /**
-     * Lists all Unit models.
+     * Lists all User models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new UnitSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        
-        if (isset(\Yii::$app->params['pageSize']))
-			$dataProvider->pagination->pageSize = (int) \Yii::$app->params['pageSize'];
+		//~ if (!Yii::$app->user->can('createUser') ||
+			//~ !Yii::$app->user->can('updateUser'))
+			//~ return $this->redirect(['site/index']);
+		
+        $dataProvider = new ActiveDataProvider([
+            'query' => User::find(),
+            'pagination' => [
+                'pageSize' => \Yii::$app->params['pageSize']
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Unit model.
-     * @param int $id ID
+     * Displays a single User model.
+     * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
+		//~ if (!Yii::$app->user->can('createUser') ||
+			//~ !Yii::$app->user->can('updateUser'))
+			//~ return $this->redirect(['site/index']);
+		
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Unit model.
+     * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Unit();
+		//~ if (!Yii::$app->user->can('createUser'))
+			//~ return $this->redirect(['site/index']);
+		
+        $model = new User();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+				$model->setRole(true);
+				
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -111,17 +130,22 @@ class UnitController extends Controller
     }
 
     /**
-     * Updates an existing Unit model.
+     * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param int $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
+		//~ if (!Yii::$app->user->can('updateUser'))
+			//~ return $this->redirect(['site/index']);
+		
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+			$model->setRole(true);
+			
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -131,29 +155,33 @@ class UnitController extends Controller
     }
 
     /**
-     * Deletes an existing Unit model.
+     * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param int $id
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
+		//~ if (!Yii::$app->user->can('updateUser'))
+			//~ return $this->redirect(['site/index']);
+		
         $this->findModel($id)->delete();
+        Yii::$app->authManager->revokeAll($id);
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Unit model based on its primary key value.
+     * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Unit the loaded model
+     * @param int $id
+     * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Unit::findOne(['id' => $id])) !== null) {
+        if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

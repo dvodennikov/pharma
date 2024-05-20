@@ -34,12 +34,28 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
+    
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
+    
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    }     
+    } else {
+		$menuItems[] = ['label' => \Yii::t('app', 'Receipts'), 'url' => ['/receipt/index']];
+		$menuItems[] = ['label' => \Yii::t('app', 'Drugs'), 'url' => ['/drug/index']];
+		$menuItems[] = ['label' => \Yii::t('app', 'Persons'), 'url' => ['/person/index']];
+		$menuItems[] = ['label' => \Yii::t('app', 'Documents'), 'url' => ['/document/index']];
+		
+		if (Yii::$app->user->can('createDocumentType')) 
+			$menuItems[] = ['label' => \Yii::t('app', 'Document types'), 'url' => ['/document-type/index']];
+			
+		if (Yii::$app->user->can('createUnit'))
+			$menuItems[] = ['label' => \Yii::t('app', 'Units'), 'url' => ['/unit/index']];
+			
+		if (Yii::$app->user->can('createUser'))
+			$menuItems[] = ['label' => \Yii::t('app', 'Users'), 'url' => ['/user/index']];
+	}
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
         'items' => $menuItems,

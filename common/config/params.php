@@ -6,6 +6,6 @@ return [
     'senderName' => 'Example.com mailer',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
-    'pageSize' => 10,
+    'pageSize' => 5,
     'user.defaultRole' => 'operator',
 ];
