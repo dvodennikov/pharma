@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'secondname')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'birthdate')->textInput(['type' => 'date', 'min' => '1900-01-01']) ?>
+    <?= $form->field($model, 'birthdate')->textInput(['type' => 'date', 'min' => '1900-01-01', 'max' => date('Y-m-d')]) ?>
 
     <?= $form->field($model, 'snils')->textInput() ?>
 

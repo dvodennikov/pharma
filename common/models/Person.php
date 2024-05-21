@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\helpers\Pharma;
 
 /**
  * This is the model class for table "person".
@@ -45,7 +46,7 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             [['surname', 'name', 'birthdate', 'snils', 'address'], 'required'],
-            [['birthdate'], 'safe'],
+            [['birthdate'], 'validateDate', 'params' => ['max' => date('Y-m-d')]],
             [['polis'], 'default', 'value' => null],
             ['snils', 'validateSnils'],
             ['polis', 'validatePolis'],
@@ -53,6 +54,31 @@ class Person extends \yii\db\ActiveRecord
             [['address'], 'string', 'max' => 1024],
         ];
     }
+    
+    /**
+     * Validate date fields
+     * @param string $attribute
+     * @param array $params
+     */
+    public function validateDate($attribute, $params)
+    {
+		$date = $this->$attribute;
+		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
+			if (isset($params['min'])) {
+				if (Pharma::dateToTimestamp($date) < Pharma::dateToTimestamp($params['min'])) {
+					$this->addError($attribute, \Yii::t('app', 'Date {date} must be greater than or equal to {min}', ['date' => $date, 'min' => $params['min']]));
+				}
+			}
+			
+			if (isset($params['max'])) {
+				if (Pharma::dateToTimestamp($date) > Pharma::dateToTimestamp($params['max'])) {
+					$this->addError($attribute, \Yii::t('app', 'Date {date} must be less than or equal to {max}', ['date' => $date, 'max' => $params['max']]));
+				}
+			}
+		} else {
+			$this->addError($attribute, \Yii::t('app', 'Wrong date: {date}', ['date' => $date]));
+		}
+	}
     
     /**
      * Validate snils attribute
@@ -103,14 +129,14 @@ class Person extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'surname' => Yii::t('app', 'Surname'),
-            'name' => Yii::t('app', 'Name'),
+            'id'         => Yii::t('app', 'ID'),
+            'surname'    => Yii::t('app', 'Surname'),
+            'name'       => Yii::t('app', 'Name'),
             'secondname' => Yii::t('app', 'Secondname'),
-            'birthdate' => Yii::t('app', 'Birthdate'),
-            'snils' => Yii::t('app', 'Snils'),
-            'polis' => Yii::t('app', 'Polis'),
-            'address' => Yii::t('app', 'Address'),
+            'birthdate'  => Yii::t('app', 'Birthdate'),
+            'snils'      => Yii::t('app', 'Snils'),
+            'polis'      => Yii::t('app', 'Polis'),
+            'address'    => Yii::t('app', 'Address'),
         ];
     }
 

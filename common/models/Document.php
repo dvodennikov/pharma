@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\helpers\Pharma;
 
 /**
  * This is the model class for table "document".
@@ -42,15 +43,22 @@ class Document extends \yii\db\ActiveRecord
     
     /**
      * Validate date fields
-     * @param string $min
+     * @param string $attribute
+     * @param array $params
      */
-    public function validateDate($attribute, $params, $validator)
+    public function validateDate($attribute, $params)
     {
 		$date = $this->$attribute;
 		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
 			if (isset($params['min'])) {
-				if (self::dateToTimestamp($date) < self::dateToTimestamp($params['min'])) {
+				if (Pharma::dateToTimestamp($date) < Pharma::dateToTimestamp($params['min'])) {
 					$this->addError($attribute, \Yii::t('app', 'Date {date} must be greater than or equal to {min}', ['date' => $date, 'min' => $params['min']]));
+				}
+			}
+			
+			if (isset($params['max'])) {
+				if (Pharma::dateToTimestamp($date) > Pharma::dateToTimestamp($params['max'])) {
+					$this->addError($attribute, \Yii::t('app', 'Date {date} must be less than or equal to {max}', ['date' => $date, 'max' => $params['max']]));
 				}
 			}
 		} else {
@@ -152,8 +160,9 @@ class Document extends \yii\db\ActiveRecord
             [['document_type', 'number', 'secondname', 'person_id'], 'default', 'value' => null],
             [['document_type', 'number', 'person_id'], 'integer'],
             //[['custom_fields'], 'safe'],
-            [['issue_date', 'birthdate'], 'validateDate'],
-            ['expire_date', 'validateDate', 'params' => ['min' => $this->issue_date]],
+            ['birthdate', 'validateDate', 'params' => ['max' => date('Y-m-d')]],
+            ['issue_date', 'validateDate', 'params' => ['min' => $this->birthdate, 'max' => date('Y-m-d')]],
+            ['expire_date', 'validateDate', 'params' => ['min' => $this->issue_date, 'max' => date('Y-m-d')]],
             [['serial'], 'string', 'max' => 10],
             [['surname', 'name', 'secondname', 'issuer'], 'string', 'max' => 255],
             [['document_type'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::class, 'targetAttribute' => ['document_type' => 'id']],
@@ -167,15 +176,15 @@ class Document extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
+            'id'            => Yii::t('app', 'ID'),
             'document_type' => Yii::t('app', 'Document Type'),
-            'serial' => Yii::t('app', 'Serial'),
-            'number' => Yii::t('app', 'Number'),
-            'issue_date' => Yii::t('app', 'Issue Date'),
-            'issuer' => Yii::t('app', 'Issuer'),
-            'expire_date' => Yii::t('app', 'Expire Date'),
+            'serial'        => Yii::t('app', 'Serial'),
+            'number'        => Yii::t('app', 'Number'),
+            'issue_date'    => Yii::t('app', 'Issue Date'),
+            'issuer'        => Yii::t('app', 'Issuer'),
+            'expire_date'   => Yii::t('app', 'Expire Date'),
             'custom_fields' => Yii::t('app', 'Custom Fields'),
-            'person_id' => Yii::t('app', 'Person'),
+            'person_id'     => Yii::t('app', 'Person'),
         ];
     }
     

@@ -23,6 +23,10 @@ use yii\widgets\ActiveForm;
 		'model'        => $model,
 		'searchPerson' => $searchPerson
 	]) ?>
+	
+	<?= $form->field($model, 'issue_date')->textInput(['type' => 'date', 'max' => date('Y-m-d')]) ?>
+	
+	<?= $form->field($model, 'sell_date')->textInput(['type' => 'date', 'max' => date('Y-m-d')]) ?>
     
 	<?= $this->render('_drugs', [
 		'model'        => $model,

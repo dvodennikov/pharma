@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\helpers\Pharma;
 
 /**
  * This is the model class for table "receipt".
@@ -44,6 +45,12 @@ class Receipt extends \yii\db\ActiveRecord
             [['person_id'], 'default', 'value' => null],
             [['person_id'], 'integer'],
             [['number'], 'string', 'max' => 10],
+            /*['issue_date', 'date', 'timestampAttribute' => 'issue_date'],
+            ['sell_date', 'date', 'timestampAttribute' => 'sell_date'],
+            [['issue_date', 'sell_date'], 'default', 'value' => null],
+            ['issue_date', 'compare', 'compareAttribute' => 'sell_date', 'operator' => '<=', 'enableClientValidation' => false],*/
+            ['issue_date', 'validateDate', 'params' => ['max' => date('Y-m-d')]],
+            ['sell_date', 'validateDate', 'params' => ['min' => $this->issue_date, 'max' => date('Y-m-d')]],
         ];
     }
 
@@ -53,11 +60,38 @@ class Receipt extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'number' => Yii::t('app', 'Number'),
-            'person_id' => Yii::t('app', 'Person ID'),
+            'id'         => Yii::t('app', 'ID'),
+            'number'     => Yii::t('app', 'Number'),
+            'person_id'  => Yii::t('app', 'Person ID'),
+            'issue_date' => Yii::t('app', 'Issue date'),
+            'sell_date'  => Yii::t('app', 'Sell date'),
         ];
     }
+    
+    /**
+     * Validate date fields
+     * @param string $attribute
+     * @param array $params
+     */
+    public function validateDate($attribute, $params)
+    {
+		$date = $this->$attribute;
+		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
+			if (isset($params['min'])) {
+				if (Pharma::dateToTimestamp($date) < Pharma::dateToTimestamp($params['min'])) {
+					$this->addError($attribute, \Yii::t('app', 'Date {date} must be greater than or equal to {min}', ['date' => $date, 'min' => $params['min']]));
+				}
+			}
+			
+			if (isset($params['max'])) {
+				if (Pharma::dateToTimestamp($date) > Pharma::dateToTimestamp($params['max'])) {
+					$this->addError($attribute, \Yii::t('app', 'Date {date} must be less than or equal to {max}', ['date' => $date, 'max' => $params['max']]));
+				}
+			}
+		} else {
+			$this->addError($attribute, \Yii::t('app', 'Wrong date: {date}', ['date' => $date]));
+		}
+	}
 
     /**
      * Gets query for [[Person]].

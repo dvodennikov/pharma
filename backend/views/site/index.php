@@ -17,7 +17,7 @@ $this->title = \Yii::$app->name;
         <div class="row">
             <div class="col-lg-4">
 			<?php 
-				$model->render('_receipts', ['model' => $model]);
+				echo $this->render('_receipts');
 			?>
             </div>
             <div class="col-lg-4">

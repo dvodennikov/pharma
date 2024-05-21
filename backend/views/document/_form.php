@@ -34,9 +34,9 @@ $documentTypes = [];
     
     <?= $form->field($model, 'secondname')->textInput() ?>
     
-    <?= $form->field($model, 'birthdate')->textInput(['type' => 'date', 'min' => '1900-01-01']) ?>
+    <?= $form->field($model, 'birthdate')->textInput(['type' => 'date', 'min' => '1900-01-01', 'max' => date('Y-m-d')]) ?>
 
-    <?= $form->field($model, 'issue_date')->textInput(['type' => 'date', 'min' => '1900-01-01']) ?>
+    <?= $form->field($model, 'issue_date')->textInput(['type' => 'date', 'min' => '1900-01-01', 'max' => date('Y-m-d')]) ?>
 
     <?= $form->field($model, 'issuer')->textInput(['maxlength' => true]) ?>
 
