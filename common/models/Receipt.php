@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use common\helpers\Pharma;
+use common\models\traitDate;
 
 /**
  * This is the model class for table "receipt".
@@ -18,6 +18,8 @@ use common\helpers\Pharma;
  */
 class Receipt extends \yii\db\ActiveRecord
 {
+	use traitDate;
+	
 	public $drugs;
     /**
      * {@inheritdoc}
@@ -68,30 +70,6 @@ class Receipt extends \yii\db\ActiveRecord
         ];
     }
     
-    /**
-     * Validate date fields
-     * @param string $attribute
-     * @param array $params
-     */
-    public function validateDate($attribute, $params)
-    {
-		$date = $this->$attribute;
-		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
-			if (isset($params['min'])) {
-				if (Pharma::dateToTimestamp($date) < Pharma::dateToTimestamp($params['min'])) {
-					$this->addError($attribute, \Yii::t('app', 'Date {date} must be greater than or equal to {min}', ['date' => $date, 'min' => $params['min']]));
-				}
-			}
-			
-			if (isset($params['max'])) {
-				if (Pharma::dateToTimestamp($date) > Pharma::dateToTimestamp($params['max'])) {
-					$this->addError($attribute, \Yii::t('app', 'Date {date} must be less than or equal to {max}', ['date' => $date, 'max' => $params['max']]));
-				}
-			}
-		} else {
-			$this->addError($attribute, \Yii::t('app', 'Wrong date: {date}', ['date' => $date]));
-		}
-	}
 
     /**
      * Gets query for [[Person]].

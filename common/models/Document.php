@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use common\helpers\Pharma;
+use common\models\traitDate;
 
 /**
  * This is the model class for table "document".
@@ -23,6 +23,8 @@ use common\helpers\Pharma;
  */
 class Document extends \yii\db\ActiveRecord
 {
+	use traitDate;
+	
 	//public $customFields;
 	
     /**
@@ -40,31 +42,6 @@ class Document extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
-    
-    /**
-     * Validate date fields
-     * @param string $attribute
-     * @param array $params
-     */
-    public function validateDate($attribute, $params)
-    {
-		$date = $this->$attribute;
-		if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/', $date)) {
-			if (isset($params['min'])) {
-				if (Pharma::dateToTimestamp($date) < Pharma::dateToTimestamp($params['min'])) {
-					$this->addError($attribute, \Yii::t('app', 'Date {date} must be greater than or equal to {min}', ['date' => $date, 'min' => $params['min']]));
-				}
-			}
-			
-			if (isset($params['max'])) {
-				if (Pharma::dateToTimestamp($date) > Pharma::dateToTimestamp($params['max'])) {
-					$this->addError($attribute, \Yii::t('app', 'Date {date} must be less than or equal to {max}', ['date' => $date, 'max' => $params['max']]));
-				}
-			}
-		} else {
-			$this->addError($attribute, \Yii::t('app', 'Wrong date: {date}', ['date' => $date]));
-		}
-	}
     
     /**
      * Validate customFields fields, stores in custom_fields in db
