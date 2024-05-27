@@ -5,6 +5,7 @@ namespace common\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Receipt;
+use common\models\ReceiptDrugs;
 
 /**
  * ReceiptSearch represents the model behind the search form of `common\models\Receipt`.
@@ -94,7 +95,7 @@ class ReceiptSearch extends Receipt
 			$query->andFilterWhere(['ILIKE', 'person.snils', $this->snils]);
 			
 		if (isset($this->drugs) && ($this->drugs != '')) {
-			$receiptDrugs = \common\models\ReceiptDrugs::find()->joinWith('drug')->where(['ILIKE', 'drug.title', $this->drugs])->all();
+			$receiptDrugs = ReceiptDrugs::getReceiptDrugsByTitle($this->drugs);
 			$receiptIds = [];
 			
 			foreach ($receiptDrugs as $receiptDrug)
@@ -110,7 +111,7 @@ class ReceiptSearch extends Receipt
 			$receiptIds[] = $receipt->id;
 		}
 		
-		$receiptDrugs = \common\models\ReceiptDrugs::find()->joinWith('drug')->where(['IN', 'receipt_id', $receiptIds])/*->indexBy('receipt_id')*/->all();
+		$receiptDrugs = ReceiptDrugs::getReceiptDrugsByReceiptIds($receiptIds);
 		//throw new \yii\base\NotSupportedException(print_r($receiptDrugs, true));
 		foreach ($receipts as &$receipt) {
 			$receipt->drugs = [];

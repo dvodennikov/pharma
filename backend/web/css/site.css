@@ -88,3 +88,14 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.control-panel ul {
+	padding-left: 0;
+	list-style-type: none;
+}
+
+.control-panel ul ul li {
+	margin-left: 1em;
+	font-size: 0.8em;
+	list-style-type: disc;
+}

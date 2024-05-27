@@ -2,12 +2,16 @@
 /** @var yii\web\View $this */
 
 use common\models\Receipt;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use common\helpers\Pharma;
 
-$receipts = Receipt::find()->limit(5)->all();
+$receipts = Receipt::getLastReceipts();
 ?>
 <h2><?= \Yii::t('app', 'Receipts') ?></h2>
 <ul>
 <?php foreach ($receipts as $receipt) : ?>
-	<li><?= $receipt->number ?></li>
+	<li><?= Html::a(Pharma::getTextRepresentationForReceipt($receipt), Url::to(['/receipt/update', 'id' => $receipt->id])) ?></li>
 <?php endforeach; ?>
 </ul>
+<p><?= Html::a(\Yii::t('app', 'Add receipt'), Url::to(['/receipt/create']), ['class' => 'btn btn-outline-success']) ?></p>

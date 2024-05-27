@@ -298,4 +298,27 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 		
 		return $receiptDrug;
 	}
+	
+	/**
+	 * Get ReceiptDrugs with Drug by drug title
+	 * @param string $title
+	 * @return ReceiptDrug[]
+	 */
+	public static function getReceiptDrugsByTitle($title)
+	{
+		return ReceiptDrugs::find()->joinWith('drug')->where(['ILIKE', 'drug.title', $title])->all();
+	}
+	
+	/**
+	 * Get ReceiptDrugs with Drug by receiptIds
+	 * @param int|array $receiptIds
+	 * @return ReceiptDrug[]
+	 */
+	public static function getReceiptDrugsByReceiptIds($receiptIds)
+	{
+		if (!is_array($receiptIds))
+			$receiptIds = [ (int)$receiptIds ];
+			
+		return \common\models\ReceiptDrugs::find()->joinWith('drug')->where(['IN', 'receipt_id', $receiptIds])/*->indexBy('receipt_id')*/->all();
+	}
 }

@@ -89,4 +89,31 @@ class Receipt extends \yii\db\ActiveRecord
     {
         return new \common\models\queries\ReceiptQuery(get_called_class());
     }
+    
+    /**
+     * Get last $limit number Receipts with Drugs order by issue_date
+     * @param int $limit
+     * @return Receipt[]
+     */
+    public static function getLastReceipts($limit = 5)
+    {
+		$receipts   = Receipt::find()->joinWith('person')->orderBy(['issue_date' => SORT_DESC])->limit($limit)->all();
+		$receiptIds = [];
+		
+		foreach ($receipts as $receipt) {
+			$receiptIds[] = $receipt->id;
+		}
+		
+		$receiptDrugs = ReceiptDrugs::getReceiptDrugsByReceiptIds($receiptIds);
+		
+		foreach ($receipts as &$receipt) {
+			$receipt->drugs = [];
+			if (isset($receiptDrugs[$receipt->id]))
+			foreach ($receiptDrugs as $receiptDrug)
+				if ($receiptDrug->receipt_id == $receipt->id)
+					$receipt->drugs[] = $receiptDrug->drug->title . ': ' . $receiptDrug->quantity;
+		}
+		
+		return $receipts;
+	}
 }

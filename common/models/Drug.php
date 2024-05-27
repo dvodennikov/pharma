@@ -95,6 +95,16 @@ class Drug extends \yii\db\ActiveRecord
 
 		return Drug::find()->where(['id' => $ids])->indexBy('id')->all();
 	}
+	
+	/**
+	 * Get last $limit Drugs
+	 * @param integer $limit
+	 * @return \common\models\Drug[]
+	 */
+	public static function getLastDrugs($limit = 5)
+	{
+		return Drug::find()->limit((int) $limit)->all();
+	}
 
     /**
      * {@inheritdoc}
