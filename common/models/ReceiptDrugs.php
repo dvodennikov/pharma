@@ -247,7 +247,7 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 					continue;
 				}
 				
-				if (isset($receiptDrugPost['drug_id'])) {
+				if (isset($receiptDrugPost['id'])) {
 					//otherwise add $receiptDrugDb to $receiptDrugs array
 					foreach ($receiptDrugsDb as &$receiptDrugDb) {
 						if ($receiptDrugPost['id'] == $receiptDrugDb->id) {

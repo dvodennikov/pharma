@@ -115,7 +115,7 @@ class ReceiptSearch extends Receipt
 		//throw new \yii\base\NotSupportedException(print_r($receiptDrugs, true));
 		foreach ($receipts as &$receipt) {
 			$receipt->drugs = [];
-			if (isset($receiptDrugs[$receipt->id]))
+			//if (isset($receiptDrugs[$receipt->id]))
 			foreach ($receiptDrugs as $receiptDrug)
 				if ($receiptDrug->receipt_id == $receipt->id)
 					$receipt->drugs[] = $receiptDrug->drug->title . ': ' . $receiptDrug->quantity;
