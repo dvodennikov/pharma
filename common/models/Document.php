@@ -4,6 +4,9 @@ namespace common\models;
 
 use Yii;
 use common\models\traitDate;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "document".
@@ -21,7 +24,7 @@ use common\models\traitDate;
  * @property Person[] $people
  * @property PersonDocument[] $personDocuments
  */
-class Document extends \yii\db\ActiveRecord
+class Document extends ActiveRecord
 {
 	use traitDate;
 	
@@ -42,6 +45,27 @@ class Document extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
+    
+    /**
+     * Behaviors for DocumentType
+     */
+    public function behaviors()
+    {
+		return [
+			[
+				'class'      => TimestampBehavior::class,
+				'attributes' => [
+					ActiveRecord::EVENT_BEFORE_INSERT => ['updated_at'],
+					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+				],
+			],
+			[
+				'class'              => BlameableBehavior::class,
+				'createdByAttribute' => 'updated_by',
+				'updatedByAttribute' => 'updated_by',
+			],
+		];
+	}
     
     /**
      * Validate customFields fields, stores in custom_fields in db
@@ -154,14 +178,16 @@ class Document extends \yii\db\ActiveRecord
     {
         return [
             'id'            => Yii::t('app', 'ID'),
-            'document_type' => Yii::t('app', 'Document Type'),
+            'document_type' => Yii::t('app', 'Document type'),
             'serial'        => Yii::t('app', 'Serial'),
             'number'        => Yii::t('app', 'Number'),
-            'issue_date'    => Yii::t('app', 'Issue Date'),
+            'issue_date'    => Yii::t('app', 'Issue date'),
             'issuer'        => Yii::t('app', 'Issuer'),
-            'expire_date'   => Yii::t('app', 'Expire Date'),
-            'custom_fields' => Yii::t('app', 'Custom Fields'),
+            'expire_date'   => Yii::t('app', 'Expire date'),
+            'custom_fields' => Yii::t('app', 'Custom fields'),
             'person_id'     => Yii::t('app', 'Person'),
+            'updated_at'    => Yii::t('app', 'Updated at'),
+            'updated_by'    => Yii::t('app', 'Updated by'),
         ];
     }
     

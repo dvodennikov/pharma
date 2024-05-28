@@ -6,7 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\helpers\Pharma;
 
-$drugs = Drug::getLastDrugs();
+$drugs = Drug::getLastDrugs(isset(\Yii::$app->params['controlPanelLastDrugsNumber'])?\Yii::$app->params['controlPanelLastDrugsNumber']:5);
 ?>
 <h2><?= \Yii::t('app', 'Drugs') ?></h2>
 <ul>

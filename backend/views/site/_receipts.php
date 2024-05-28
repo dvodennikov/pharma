@@ -6,7 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\helpers\Pharma;
 
-$receipts = Receipt::getLastReceipts();
+$receipts = Receipt::getLastReceipts(isset(\Yii::$app->params['controlPanelLastReceiptsNumber'])?\Yii::$app->params['controlPanelLastReceiptsNumber']:5);
 ?>
 <h2><?= \Yii::t('app', 'Receipts') ?></h2>
 <ul>

@@ -32,6 +32,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description',
+            [
+				'attribute' => 'updated_at',
+				'format'    => 'text',
+				'value'     => function($model) {
+					return isset($model->updated_at)?\Yii::$app->getFormatter()->asDatetime($model->updated_at):\Yii::t('app' ,'none');
+				}
+            ],
+            [
+				'attribute' => 'updated_by',
+				'format'    => 'text',
+				'value'     => function($model) {
+					return isset($model->updated_by)?\common\models\User::getUsernameById($model->updated_by):\Yii::t('app' ,'none');
+				}
+            ],
         ],
     ]) ?>
 

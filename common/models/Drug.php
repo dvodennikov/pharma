@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "drug".
@@ -16,7 +19,7 @@ use Yii;
  * @property Unit $measuryUnit
  * @property Receipt[] $receipts
  */
-class Drug extends \yii\db\ActiveRecord
+class Drug extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -33,6 +36,27 @@ class Drug extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
+    
+    /**
+     * Behaviors for DocumentType
+     */
+    public function behaviors()
+    {
+		return [
+			[
+				'class'      => TimestampBehavior::class,
+				'attributes' => [
+					ActiveRecord::EVENT_BEFORE_INSERT => ['updated_at'],
+					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+				],
+			],
+			[
+				'class'              => BlameableBehavior::class,
+				'createdByAttribute' => 'updated_by',
+				'updatedByAttribute' => 'updated_by',
+			],
+		];
+	}
 
     /**
      * {@inheritdoc}
@@ -55,11 +79,13 @@ class Drug extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'title' => Yii::t('app', 'Title'),
-            'description' => Yii::t('app', 'Description'),
-            'measury' => Yii::t('app', 'Measury'),
-            'measury_unit' => Yii::t('app', 'Measury Unit'),
+            'id'           => Yii::t('app', 'ID'),
+            'title'        => Yii::t('app', 'Title'),
+            'description'  => Yii::t('app', 'Description'),
+            'measury'      => Yii::t('app', 'Measury'),
+            'measury_unit' => Yii::t('app', 'Measury unit'),
+            'updated_at'   => Yii::t('app', 'Updated at'),
+            'updated_by'   => Yii::t('app', 'Updated by'),
         ];
     }
 

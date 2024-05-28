@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "unit".
@@ -14,7 +17,7 @@ use Yii;
  * @property Drug[] $drugs
  * @property Receipt[] $receipts
  */
-class Unit extends \yii\db\ActiveRecord
+class Unit extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -31,6 +34,27 @@ class Unit extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
+    
+    /**
+     * Behaviors for DocumentType
+     */
+    public function behaviors()
+    {
+		return [
+			[
+				'class'      => TimestampBehavior::class,
+				'attributes' => [
+					ActiveRecord::EVENT_BEFORE_INSERT => ['updated_at'],
+					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+				],
+			],
+			[
+				'class'              => BlameableBehavior::class,
+				'createdByAttribute' => 'updated_by',
+				'updatedByAttribute' => 'updated_by',
+			],
+		];
+	}
 
     /**
      * {@inheritdoc}
@@ -50,9 +74,11 @@ class Unit extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'title' => Yii::t('app', 'Title'),
+            'id'          => Yii::t('app', 'ID'),
+            'title'       => Yii::t('app', 'Title'),
             'description' => Yii::t('app', 'Description'),
+            'updated_at'  => Yii::t('app', 'Updated at');
+            'updated_by'  => Yii::t('app', 'Updated by');
         ];
     }
 

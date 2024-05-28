@@ -161,7 +161,6 @@ class ReceiptController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
 			$receiptDrugs      = ReceiptDrugs::loadReceiptDrugs('ReceiptDrugs', $model);
-			//throw new \yii\base\NotSupportedException(print_r($receiptDrugs, true));
 			
 			foreach ($receiptDrugs as $receiptDrug)
 				if ($receiptDrug->hasErrors()) {
@@ -191,7 +190,7 @@ class ReceiptController extends Controller
 						//throw new \yii\base\NotSupportedException(print_r($receiptDrug, true));
 						$receiptDrug->save();
 						
-						$drugIds[] = $receiptDrug->getPrimaryKey();
+						$drugIds[] = isset($receiptDrug->id)?$receiptDrug->id:$receiptDrug->getPrimaryKey();
 					//}
 				}
 				

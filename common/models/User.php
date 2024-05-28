@@ -271,4 +271,11 @@ class User extends ActiveRecord implements IdentityInterface
 		
 		return array_key_first($auth->getRolesByUser($this->id));
 	}
+	
+	public static function getUsernameById($id)
+	{
+		$user = User::findOne(['id' => $id]);
+		
+		return isset($user->username)?$user->username:\Yii::t('app', 'none');
+	}
 }

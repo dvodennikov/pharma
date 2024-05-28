@@ -47,6 +47,7 @@ class Receipt extends \yii\db\ActiveRecord
             [['person_id'], 'default', 'value' => null],
             [['person_id'], 'integer'],
             [['number'], 'string', 'max' => 10],
+            [['number'], 'unique'],
             /*['issue_date', 'date', 'timestampAttribute' => 'issue_date'],
             ['sell_date', 'date', 'timestampAttribute' => 'sell_date'],
             [['issue_date', 'sell_date'], 'default', 'value' => null],
@@ -67,6 +68,8 @@ class Receipt extends \yii\db\ActiveRecord
             'person_id'  => Yii::t('app', 'Person ID'),
             'issue_date' => Yii::t('app', 'Issue date'),
             'sell_date'  => Yii::t('app', 'Sell date'),
+            'updated_at' => Yii::t('app', 'Updated at'),
+            'updated_by' => Yii::t('app', 'Updated by'),
         ];
     }
     

@@ -4,6 +4,9 @@ namespace common\models;
 
 use Yii;
 use common\models\traitDate;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "person".
@@ -21,7 +24,7 @@ use common\models\traitDate;
  * @property PersonDocument[] $personDocuments
  * @property Receipt[] $receipts
  */
-class Person extends \yii\db\ActiveRecord
+class Person extends ActiveRecord
 {
 	use traitDate;
 	
@@ -40,6 +43,27 @@ class Person extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('dbdata');
     }
+    
+    /**
+     * Behaviors for DocumentType
+     */
+    public function behaviors()
+    {
+		return [
+			[
+				'class'      => TimestampBehavior::class,
+				'attributes' => [
+					ActiveRecord::EVENT_BEFORE_INSERT => ['updated_at'],
+					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+				],
+			],
+			[
+				'class'              => BlameableBehavior::class,
+				'createdByAttribute' => 'updated_by',
+				'updatedByAttribute' => 'updated_by',
+			],
+		];
+	}
 
     /**
      * {@inheritdoc}
@@ -114,6 +138,8 @@ class Person extends \yii\db\ActiveRecord
             'snils'      => Yii::t('app', 'Snils'),
             'polis'      => Yii::t('app', 'Polis'),
             'address'    => Yii::t('app', 'Address'),
+            'updated_at' => Yii::t('app', 'Updated at'),
+            'updated_by' => Yii::t('app', 'Updated by'),
         ];
     }
 

@@ -29,7 +29,7 @@ class m240306_222853_create_receipt_table extends Migration
     {
         $this->createTable('{{%receipt}}', [
             'id' => $this->primaryKey(),
-            'number' => $this->string(10)->defaultValue(null),
+            'number' => $this->string(10)->unique()->defaultValue(null),
             'person_id' => $this->integer(11)->notNull(),
             'drug_id' => $this->integer(11)->notNull(),
             'quantity' => $this->integer(6)->notNull()->defaultValue(1),

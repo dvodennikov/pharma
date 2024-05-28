@@ -8,4 +8,6 @@ return [
     'user.passwordMinLength' => 8,
     'pageSize' => 5,
     'user.defaultRole' => 'operator',
+    'controlPanelLastReceiptsNumber' => 3,
+    'controlPanelLastDrugsNumber' => 5,
 ];
