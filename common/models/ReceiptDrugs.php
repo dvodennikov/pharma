@@ -55,6 +55,22 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function attributeLabels()
+    {
+        return [
+            'receipt_id' => Yii::t('app', 'Receipt ID'),
+            'drug_id'    => Yii::t('app', 'Drug ID'),
+            'quantity'   => Yii::t('app', 'Quantity'),
+        ];
+    }
+    
+    /**
+     * Load ReceiptDrug fields from array. 
+     * Return boolean, indicating where are any param loaded from array.
+     * @params array $array
+     * @params boolean $validate
+     * @return boolean
+     */
     public function loadFromArray($array, $validate = true)
     {
 		if (is_array($array)) {
@@ -76,18 +92,6 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 		
 		return false;
 	}
-	
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'receipt_id' => Yii::t('app', 'Receipt ID'),
-            'drug_id' => Yii::t('app', 'Drug ID'),
-            'quantity' => Yii::t('app', 'Quantity'),
-        ];
-    }
 
     /**
      * Gets query for [[Receipt]].
@@ -189,6 +193,7 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
      * Load ReceiptDrugs from POST request from $receiptDrugsSource or
      * load ReceiptDrugs from $receiptDrugsSource if it is an array
      * @param array|string $receiptDrugsSource
+     * @params yii\db\ActiveRecord $validator
      * @return ReceiptDrug[]
      */
     public static function loadReceiptDrugs($receiptDrugsSource = 'ReceiptDrugs', $validator = null)
@@ -213,7 +218,7 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 			$receiptDrugsNew = [];
 			for ($idx = 0, $receiptDrugsPostCount = count($receiptDrugsPost); $idx < $receiptDrugsPostCount; $idx++) {
 				//$receiptDrugs[] = ReceiptDrugs::loadReceiptDrug($receiptDrugsPost[$idx]);
-				//load existed drug
+				//add id for existed drug
 				if (isset($receiptDrugsPost[$idx]['id']) && preg_match('/\d+/', $receiptDrugsPost[$idx]['id'])) {
 					$drugsIds[] = $receiptDrugsPost[$idx]['id'];
 				//add new drug
@@ -224,11 +229,13 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 			
 			//throw new \yii\base\NotSupportedException(print_r($drugsIds, true));
 			$receiptDrugsDb = [];
+			//load existed drug
 			if (count($drugsIds) > 0) {
 				//array_push($receiptDrugs, ReceiptDrugs::find()->where(['IN', 'drug_id', $drugsIds])->all());
 				$receiptDrugsDb = ReceiptDrugs::find()->where(['IN', 'id', $drugsIds])->all();
 				
 			}
+			
 			$idx = -1;
 			foreach ($receiptDrugsPost as $receiptDrugPost) {
 				$idx++;
@@ -243,7 +250,7 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 				if (isset($receiptDrugPost['drug_id'])) {
 					//otherwise add $receiptDrugDb to $receiptDrugs array
 					foreach ($receiptDrugsDb as &$receiptDrugDb) {
-						if ($receiptDrugPost['drug_id'] == $receiptDrugDb->drug_id) {
+						if ($receiptDrugPost['id'] == $receiptDrugDb->id) {
 							//load values from POST request
 							$receiptDrugDb->loadFromArray($receiptDrugPost);
 							$receiptDrugs[] = $receiptDrugDb;
@@ -274,6 +281,7 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
      * Load ReceiptDrug from POST request from $receiptDrugsName or
      * load ReceiptDrug from $receiptDrugSource if it is an array
      * @param string $name
+     * @param boolean $validate
      * @return ReceiptDrug
      */
     public static function loadReceiptDrug($receiptDrugSource = 'ReceiptDrug', $validate = true)
