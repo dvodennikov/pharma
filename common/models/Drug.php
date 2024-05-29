@@ -129,7 +129,7 @@ class Drug extends ActiveRecord
 	 */
 	public static function getLastDrugs($limit = 5)
 	{
-		return Drug::find()->limit((int) $limit)->all();
+		return Drug::find()->limit((int) $limit)->orderBy(['updated_at' => SORT_DESC])->all();
 	}
 
     /**

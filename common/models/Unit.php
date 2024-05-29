@@ -77,8 +77,8 @@ class Unit extends ActiveRecord
             'id'          => Yii::t('app', 'ID'),
             'title'       => Yii::t('app', 'Title'),
             'description' => Yii::t('app', 'Description'),
-            'updated_at'  => Yii::t('app', 'Updated at');
-            'updated_by'  => Yii::t('app', 'Updated by');
+            'updated_at'  => Yii::t('app', 'Updated at'),
+            'updated_by'  => Yii::t('app', 'Updated by'),
         ];
     }
 

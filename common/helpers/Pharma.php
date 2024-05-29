@@ -4,6 +4,9 @@
  */
 namespace common\helpers;
 
+use yii\helpers\Html;
+use yii\helpers\Url;
+
 class Pharma {
 	/**
 	 * Get text representation for person as array|object
@@ -49,15 +52,16 @@ class Pharma {
 			return '';
 		}
 		
-		return $drug->title . (isset($drug->description)?(' [' . Pharma::getTextRepresentationForPerson($drug->description) . ']'):'');
+		return $drug->title . (isset($drug->description)?(' [' . $drug->description . ']'):'');
 	}
 	
 	/**
 	 * Get text representation for Receipt
 	 * @param array|object $receipt
+	 * @param array $params
 	 * @return string
 	 */
-	public static function getTextRepresentationForReceipt($receipt)
+	public static function getTextRepresentationForReceipt($receipt, $params)
 	{
 		if (is_array($receipt)) {
 			$receipt = (object) $receipt;
@@ -67,6 +71,9 @@ class Pharma {
 		}
 		
 		$text = $receipt->number . (isset($receipt->person)?(' ' . Pharma::getTextRepresentationForPerson($receipt->person)):'');
+		
+		if (isset($params['url']))
+			$text = Html::a($text, $params['url']);
 		
 		if (isset($receipt->drugs)) {
 			$drugs = '';

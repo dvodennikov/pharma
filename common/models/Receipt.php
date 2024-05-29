@@ -100,7 +100,7 @@ class Receipt extends \yii\db\ActiveRecord
      */
     public static function getLastReceipts($limit = 5)
     {
-		$receipts   = Receipt::find()->joinWith('person')->orderBy(['issue_date' => SORT_DESC])->limit($limit)->all();
+		$receipts   = Receipt::find()->joinWith('person')->orderBy(['updated_at' => SORT_DESC])->limit($limit)->all();
 		$receiptIds = [];
 		
 		foreach ($receipts as $receipt) {
@@ -111,7 +111,7 @@ class Receipt extends \yii\db\ActiveRecord
 		
 		foreach ($receipts as &$receipt) {
 			$receipt->drugs = [];
-			if (isset($receiptDrugs[$receipt->id]))
+			//if (isset($receiptDrugs[$receipt->id]))
 			foreach ($receiptDrugs as $receiptDrug)
 				if ($receiptDrug->receipt_id == $receipt->id)
 					$receipt->drugs[] = $receiptDrug->drug->title . ': ' . $receiptDrug->quantity;

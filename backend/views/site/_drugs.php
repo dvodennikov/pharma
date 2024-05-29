@@ -11,7 +11,7 @@ $drugs = Drug::getLastDrugs(isset(\Yii::$app->params['controlPanelLastDrugsNumbe
 <h2><?= \Yii::t('app', 'Drugs') ?></h2>
 <ul>
 <?php foreach ($drugs as $drug) : ?>
-	<li><?= Html::a($drug->title, Url::to(['/drug/update', 'id' => $drug->id])) ?></li>
+	<li><?= Html::a(Pharma::getTextRepresentationForDrug($drug), Url::to(['/drug/update', 'id' => $drug->id])) ?></li>
 <?php endforeach; ?>
 </ul>
 <p><?= Html::a(\Yii::t('app', 'Add drug'), Url::to(['/drug/create']), ['class' => 'btn btn-outline-success']) ?></p>

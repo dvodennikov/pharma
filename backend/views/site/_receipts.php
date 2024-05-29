@@ -11,7 +11,7 @@ $receipts = Receipt::getLastReceipts(isset(\Yii::$app->params['controlPanelLastR
 <h2><?= \Yii::t('app', 'Receipts') ?></h2>
 <ul>
 <?php foreach ($receipts as $receipt) : ?>
-	<li><?= Html::a(Pharma::getTextRepresentationForReceipt($receipt), Url::to(['/receipt/update', 'id' => $receipt->id])) ?></li>
+	<li><?= Pharma::getTextRepresentationForReceipt($receipt, ['url' => Url::to(['/receipt/update', 'id' => $receipt->id])]) ?></li>
 <?php endforeach; ?>
 </ul>
 <p><?= Html::a(\Yii::t('app', 'Add receipt'), Url::to(['/receipt/create']), ['class' => 'btn btn-outline-success']) ?></p>
