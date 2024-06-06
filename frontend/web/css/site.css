@@ -101,3 +101,47 @@ a.desc:after {
 {
     text-decoration: none;
 }
+
+#search-container {
+	display: flex;
+	position: relative;
+}
+
+#search-field {
+	padding: 0.3em;
+    width: 100%;
+    border: 2px solid #00b4cc;
+    border-right: none;
+    border-radius: 0.5em 0 0 0.5em;
+}
+
+#search-button {
+	width: 3em;
+	color: #fff;
+	background-color: #00b4cc;
+	border: 2px solid #00b4cc;
+	border-radius: 0 0.5em 0.5em 0;
+}
+
+#reset-button {
+	width: 2em;
+	background: transparent;
+	border: 2px solid #00b4cc;
+	border-left: none;
+	border-right: none;
+	border-radius: 0;
+}
+
+ul.initial-list {
+	margin: 0.5em 0;
+	padding: 0;
+	list-style: none;
+}
+
+li.initial-item {
+	display: inline-block;
+}
+
+li.initial-item a {
+	text-decoration: none;
+}

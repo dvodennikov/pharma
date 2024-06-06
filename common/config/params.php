@@ -10,4 +10,5 @@ return [
     'user.defaultRole' => 'operator',
     'controlPanelLastReceiptsNumber' => 3,
     'controlPanelLastDrugsNumber' => 5,
+    'cacheExpire' => 3600,
 ];

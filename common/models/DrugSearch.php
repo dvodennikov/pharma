@@ -18,7 +18,7 @@ class DrugSearch extends Drug
     {
         return [
             [['id', 'measury', 'measury_unit'], 'integer'],
-            [['title', 'description'], 'safe'],
+            [['title', 'description'], 'string', 'max' => 255],
         ];
     }
 
@@ -49,6 +49,10 @@ class DrugSearch extends Drug
         ]);
 
         $this->load($params);
+        //throw new \yii\base\NotSupportedException(print_r($this, true));
+        
+        if (!isset($params['sort']))
+			$dataProvider->sort->defaultOrder = ['title' => SORT_ASC];
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -65,7 +69,10 @@ class DrugSearch extends Drug
 
         $query->andFilterWhere(['ilike', 'title', $this->title])
             ->andFilterWhere(['ilike', 'description', $this->description]);
-
+            
+         if (isset($params['initial']))
+			$query->andFilterWhere(['ilike', 'title', mb_substr($params['initial'], 0, 1) . '%', false]);
+            
         return $dataProvider;
     }
 }

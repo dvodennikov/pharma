@@ -132,6 +132,20 @@ class Drug extends ActiveRecord
 		return Drug::find()->limit((int) $limit)->orderBy(['updated_at' => SORT_DESC])->all();
 	}
 
+	/**
+	 * Get distinct initial letters of all Drug's title
+	 * @return \common\models\Drug[]
+	 */
+	public static function getDistinctTitleInitialLetters()
+	{
+		return Drug::find()->select(['SUBSTRING(title, 0, 2) AS initial'])
+		                   ->distinct()
+		                   ->orderBy(['initial' => SORT_ASC])
+		                   ->asArray()
+		                   ->cache(isset(\Yii::$app->params['cacheExpire'])?((int) \Yii::$app->params['cacheExpire']):3600)
+		                   ->all();
+	}
+
     /**
      * {@inheritdoc}
      * @return \common\models\queries\DrugQuery the active query used by this AR class.

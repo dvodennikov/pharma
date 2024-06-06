@@ -15,6 +15,7 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use common\models\DrugSearch;
 
 /**
  * Site controller
@@ -40,6 +41,11 @@ class SiteController extends Controller
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['?'],
                     ],
                 ],
             ],
@@ -75,7 +81,49 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+		//throw new \yii\base\NotSupportedException(print_r($this->request->queryParams, true));
+        $searchModel  = new DrugSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        
+        if (isset(\Yii::$app->params['pageSize']))
+			$dataProvider->pagination->pageSize = (int) \Yii::$app->params['pageSize'];
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    /**
+     * Display common\models\Drug model by id
+     * @params int $id
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView($id) {
+		$model = $this->findModel($id);
+		
+		//throw new \yii\base\NotSupportedException(print_r($model, true));
+		//if ($model)
+			return $this->render('/site/view', ['model' => $model]);
+			
+		//$this->redirect('index');
+	}
+	
+	/**
+     * Finds the Drug model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param int $id ID
+     * @return Drug the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = \common\models\Drug::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
     /**
