@@ -51,6 +51,8 @@ class DrugSearch extends Drug
         $this->load($params);
         //throw new \yii\base\NotSupportedException(print_r($this, true));
         
+        $query->joinWith('measuryUnit');
+        
         if (!isset($params['sort']))
 			$dataProvider->sort->defaultOrder = ['title' => SORT_ASC];
 
@@ -67,11 +69,11 @@ class DrugSearch extends Drug
             'measury_unit' => $this->measury_unit,
         ]);
 
-        $query->andFilterWhere(['ilike', 'title', $this->title])
-            ->andFilterWhere(['ilike', 'description', $this->description]);
+        $query->andFilterWhere(['ilike', '{{drug}}.title', $this->title])
+            ->andFilterWhere(['ilike', '{{drug}}.description', $this->description]);
             
          if (isset($params['initial']))
-			$query->andFilterWhere(['ilike', 'title', mb_substr($params['initial'], 0, 1) . '%', false]);
+			$query->andFilterWhere(['ilike', '{{drug}}.title', mb_substr($params['initial'], 0, 1) . '%', false]);
             
         return $dataProvider;
     }

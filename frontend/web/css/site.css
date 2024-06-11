@@ -145,3 +145,13 @@ li.initial-item {
 li.initial-item a {
 	text-decoration: none;
 }
+
+ul.pagination li {
+	margin: 0 0.5em;
+}
+
+ul.pagination li.active a {
+	color: #fff;
+	background-color: #00b4cc;
+	text-decoration: none;
+}

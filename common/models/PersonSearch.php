@@ -49,6 +49,14 @@ class PersonSearch extends Person
         ]);
 
         $this->load($params);
+        
+        if (!isset($params['sort']))
+			$dataProvider->sort->defaultOrder = [
+				'surname'    => SORT_ASC, 
+				'name'       => SORT_ASC,
+				'secondname' => SORT_ASC,
+				'birthdate'  => SORT_ASC,
+			];
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

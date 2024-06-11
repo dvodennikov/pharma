@@ -49,6 +49,9 @@ class UnitSearch extends Unit
         ]);
 
         $this->load($params);
+        
+        if (!isset($params['sort']))
+			$dataProvider->sort->defaultOrder = ['title' => SORT_ASC];
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

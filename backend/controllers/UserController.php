@@ -67,6 +67,7 @@ class UserController extends Controller
 		//~ if (!Yii::$app->user->can('createUser') ||
 			//~ !Yii::$app->user->can('updateUser'))
 			//~ return $this->redirect(['site/index']);
+		//throw new \yii\base\NotSupportedException(print_r(Yii::$app->user, true));
 		
         $dataProvider = new ActiveDataProvider([
             'query' => User::find(),
@@ -187,4 +188,5 @@ class UserController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+    
 }

@@ -14,7 +14,7 @@ if (!isset($idx))
 	$idx = 0;
 ?>
 
-<div class="control-group py-2">
+<div class="control-group">
 	<label for="DocumentType[custom_fields][<?= $idx ?>][title]">
 		<?= Yii::t('app', 'Title') ?>
 	</label>
@@ -46,7 +46,6 @@ if (!isset($idx))
 		   size="5"
 		   value="<?= isset($customField['mask'])?$customField['mask']:'' ?>"
 		   placeholder="<?= Yii::t('app', 'Mask') ?>">
-	<br>
 	<?= Html::submitButton(Yii::t('app', 'Delete field'), [
 		'class' => 'delete-custom-field btn btn-danger', 
 		'formaction' => '/document-type/delete-custom-field?id=' . $id . '&idx=' . $idx

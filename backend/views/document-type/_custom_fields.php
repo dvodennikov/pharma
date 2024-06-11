@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 <input type="hidden" value="<?= json_encode($model->custom_fields) ?>">
     
-    <div id="custom-fields" class="form-group my-3">
+    <div id="custom-fields" class="form-group">
 		<h3><?= Yii::t('app', 'Custom fields') ?>:</h3>
 		
 	<?php if ($model->hasErrors('custom_fields')) : ?>

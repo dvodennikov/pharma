@@ -41,7 +41,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'description',
             'measury',
-            'measury_unit',
+            //'measury_unit',
+            [
+				'attribute' => 'measury_unit',
+				'format'    => 'text',
+				'content'   => function($model) {
+					return $model->measuryUnit->title;
+				}
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Drug $model, $key, $index, $column) {

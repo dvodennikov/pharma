@@ -99,3 +99,49 @@ a.desc:after {
 	font-size: 0.8em;
 	list-style-type: disc;
 }
+
+.form-group {
+	margin: 0;
+	padding: 1em 0;
+}
+
+.control-group + .control-group {
+	margin-top: 1em;
+}
+
+.row h4 {
+	padding: 0;
+}
+
+.row .col-sm-6 {
+	padding: 0;
+}
+
+.row .col-sm-6:first-child {
+	padding-left: 0;
+}
+
+.row .col-sm-6 + .col-sm-6 {
+	padding-left: 1em;
+}
+
+.form-group input + label,
+.form-group select + label,
+.form-group button + label {
+	margin-top: 1em;
+}
+
+.form-group button,
+.form-group a.btn {
+	margin-top: 1em;
+}
+
+ul.pagination li {
+	margin: 0 0.5em;
+}
+
+ul.pagination li.active a {
+	color: #fff;
+	background-color: #198754;
+	text-decoration: none;
+}

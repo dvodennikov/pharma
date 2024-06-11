@@ -23,8 +23,8 @@ use yii\widgets\ActiveForm;
     
     <?= $this->render('_custom_fields', ['model' => $model]) ?>
 
-    <div class="form-group py-5">
-		<?= Html::submitButton(Yii::t('app', 'Add field'), ['id' => 'add-custom-fields', 'class' => 'btn btn-primary my-3', 'formaction' => '/document-type/add-custom-fields?id=' . $model->id]) ?><br>
+    <div class="form-group">
+		<?= Html::submitButton(Yii::t('app', 'Add field'), ['id' => 'add-custom-fields', 'class' => 'btn btn-primary', 'formaction' => '/document-type/add-custom-fields?id=' . $model->id]) ?><br>
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success', 'formaction' => '/document-type/' . (isset($model->id)?('update?id=' . $model->id):'create')]) ?>
         <?= Html::a(Yii::t('app', 'Cancel'), '/document-type', ['class' => 'btn btn-danger']) ?>
     </div>

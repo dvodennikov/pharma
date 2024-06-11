@@ -7,9 +7,7 @@ $this->title = \Yii::$app->name;
 <div class="site-index">
 
     <div class="jumbotron text-center bg-transparent">
-        <h1 class="display-4"><?= \Yii::$app->name ?></h1>
-
-        <p class="lead"><?= \Yii::t('app', 'Control panel') ?></p>
+        <h1 class="display-4"><?= \Yii::t('app', 'Control panel') ?></h1>
     </div>
 
     <div class="control-panel body-content">

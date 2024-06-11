@@ -73,6 +73,9 @@ class ReceiptSearch extends Receipt
         $query->joinWith('person');
 
         $this->load($params);
+        
+        if (!isset($params['sort']))
+			$dataProvider->sort->defaultOrder = ['id' => SORT_DESC];
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

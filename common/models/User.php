@@ -278,4 +278,10 @@ class User extends ActiveRecord implements IdentityInterface
 		
 		return isset($user->username)?$user->username:\Yii::t('app', 'none');
 	}
+	
+	public function can($permissionName, $params = [], $allowCaching = true)
+    {
+		throw new \yii\base\NotSupported('not supported');
+		return true;
+	}
 }
