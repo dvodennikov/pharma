@@ -155,3 +155,8 @@ ul.pagination li.active a {
 	background-color: #00b4cc;
 	text-decoration: none;
 }
+
+div.help-block {
+	color: red;
+	font-size: 0.8em;
+}

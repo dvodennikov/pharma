@@ -182,7 +182,7 @@ class ReceiptDrugs extends \yii\db\ActiveRecord
 			$receiptDrugValidated['quantity'] = null;
 				
 			if (!is_null($validator))
-				$validator->addError('quantity', \Yii::t('app', 'Field quantity must be integer'));
+				$validator->addError('quantity', \Yii::t('app', 'Field {field} must be integer', ['field' => 'quantity']));
 
 		}
 		

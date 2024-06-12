@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
     <?php //echo $form->field($model, 'measury_unit')->textInput() ?>
     
     <div class="form-group">
-		<label for="drug-measury_unit" class="control-label"><?= \Yii::t('app', 'Drug') ?></label>
+		<label for="drug-measury_unit" class="control-label"><?= \Yii::t('app', 'Measury unit') ?></label>
 		<select id="drug-measury_unit" name="Drug[measury_unit]" class="form-control">
 	<?php 
 		$units = \common\models\Unit::find()->all();

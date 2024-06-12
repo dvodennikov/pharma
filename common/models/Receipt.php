@@ -70,6 +70,8 @@ class Receipt extends \yii\db\ActiveRecord
             'sell_date'  => Yii::t('app', 'Sell date'),
             'updated_at' => Yii::t('app', 'Updated at'),
             'updated_by' => Yii::t('app', 'Updated by'),
+            'snils'      => Yii::t('app', 'SNILS'),
+            'drugs'      => Yii::t('app', 'Drugs'),
         ];
     }
     

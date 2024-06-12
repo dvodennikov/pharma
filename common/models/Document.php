@@ -188,6 +188,9 @@ class Document extends ActiveRecord
             'person_id'     => Yii::t('app', 'Person'),
             'updated_at'    => Yii::t('app', 'Updated at'),
             'updated_by'    => Yii::t('app', 'Updated by'),
+            'surname'       => Yii::t('app', 'Surname'),
+            'name'          => Yii::t('app', 'Name'),
+            'secondname'    => Yii::t('app', 'Secondname'),
         ];
     }
     
