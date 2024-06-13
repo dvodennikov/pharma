@@ -88,7 +88,8 @@ class Pharma {
 	
 	/**
      * Convert date to timestamp
-     * @param string date
+     * @param string $date
+     * @return string
      */
     public static function dateToTimestamp($date)
     {
@@ -97,5 +98,37 @@ class Pharma {
 		}
 		
 		return 0;
+	}
+	
+	/**
+	 * Get HTML for language switching
+	 * @param string[] $languages
+	 * @return string
+	 */
+	public static function getLanguageSwitchingHtml($languages = null)
+	{
+		if (!is_array($languages))
+			$languages = ['en-US', 'ru-RU'];
+			
+		$currentLanguage = \Yii::$app->language;//\Yii::$app->session->get('language', 'en-US');
+		$currentUrl      = \Yii::$app->request->getUrl();
+		$currentUrl      = substr($currentUrl, 0, (stripos($currentUrl, '?') === false)?strlen($currentUrl):stripos($currentUrl, '?'));
+		$params          = \Yii::$app->request->get();
+		$paramsUrl       = '';
+		
+		foreach ($params as $param => $value)
+			$paramsUrl .= '&' . urlencode($param) . '=' . urlencode($value);
+		
+		$html            = '<div class="languages-switching">';
+		
+		foreach ($languages as $language) {
+			$params['language'] = $language;
+			$html .= '<span' . (($currentLanguage == $language)?' class="language-active"':'') . '>' . 
+			         //Html::a(mb_substr($language, 0, 2), Url::to([$currentUrl, 'language' => $language])) .
+			         Html::a(mb_substr($language, 0, 2), $currentUrl . '?' . $paramsUrl . '&language=' . $language) .
+			         '</span>';
+		}
+		
+		return $html . '</div>';
 	}
 }

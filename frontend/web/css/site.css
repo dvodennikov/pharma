@@ -160,3 +160,22 @@ div.help-block {
 	color: red;
 	font-size: 0.8em;
 }
+
+.languages-switching a {
+	color: #ccc;
+	text-decoration: none;
+}
+
+.languages-switching .language-active a {
+	color: red;
+}
+
+.languages-switching span:first-child::before {
+	content: '';
+	color: white;
+}
+
+.languages-switching span::before {
+	content: '|';
+	color: white;
+}

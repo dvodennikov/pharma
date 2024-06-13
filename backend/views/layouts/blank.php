@@ -24,6 +24,9 @@ AppAsset::register($this);
 <main role="main">
     <div class="container">
         <?= $content ?>
+        <div class="languages-container">
+        <?= common\helpers\Pharma::getLanguageSwitchingHtml(); ?>
+        </div>
     </div>
 </main>
 
