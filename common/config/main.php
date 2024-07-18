@@ -28,19 +28,6 @@ return [
 			],
 		],
     ],
-    'on ' . yii\web\Application::EVENT_BEFORE_REQUEST => function() {
-		$request  = \Yii::$app->getRequest();
-		$language = $request->get('language', null);
-		$cookies  = $request->getCookies();
-		
-		if (isset($language)) {
-			//$cookies->add(new \yii\web\Cookie(['name' => 'language', 'value' => $language]));
-			\Yii::$app->getResponse()->getCookies()->add(new \yii\web\Cookie(['name' => 'language', 'value' => mb_substr($language, 0, 5)]));
-			\Yii::$app->language = mb_substr($language, 0, 5);
-		} elseif ($cookies->has('language')) {
-			\Yii::$app->language = $cookies->getValue('language');
-		}
-	},
     'name' => 'Pharma',
     'language' => 'ru-RU',
 ];
