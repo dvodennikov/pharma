@@ -27,7 +27,22 @@ class Login extends Model
         return [
             // username and password are both required
             //[['username', 'password'], 'required'],
-            [['email', 'password'], 'required'],
+            [['password'], 'required'],
+            [
+				'email', 'required', 
+				'message' => 'Either username or email is required',
+				'when' => function($model) {
+					return empty($model->username);
+				}
+			],
+            [
+				'username', 'required', 
+				'message' => 'Either username or email is required',
+				'when' => function($model) {
+					return empty($model->email);
+				}
+			],
+			['email', 'default', 'value' => null],
             ['email', 'email'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
@@ -46,44 +61,45 @@ class Login extends Model
     public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            $user = $this->getUserByEmail();
+            $user = isset($this->email)?$this->getUserByEmail():User::findByUsername($this->username);
             if (!$user || 
 				empty($this->password) || 
 				!$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, 'Incorrect username/email or password.');
             }
         }
     }
 
     /**
-     * Logs in a user using the provided username and password.
+     * Logs in a user using the provided username/email and password.
      *
      * @return array containing status whether the user is logged in successfully
      */
     public function login()
     {
         if ($this->validate()) {
-            $user = $this->getUserByEmail();
+			$user = isset($this->email)?$this->getUserByEmail():User::findByUsername($this->username);
             
-            if (!isset($user->access_token)) {
+            //if (!isset($user->access_token)) {
+            if ($user->access_token === null) {
 				$user->generateAccessToken();
 				$user->save();
 			}
             
             if (Yii::$app->user->login($user, 3600 * 24 * 30)) {
 				return [
-					'success' => true,
+					'success'  => true,
 					'username' => Yii::$app->user->identity->username,
-					'token' => $user->access_token,
+					'token'    => $user->access_token,
+					'status'   => 200,
 				];
 			} else {
 				Yii::$app->response->statusCode = 422;
 
 				return [
 					'success' => false,
-					'errors' => $this->getErrors(),
-					'username' => $this->username,
-					'password' => $this->password,
+					'errors'  => $this->getErrors(),
+					'status'  => 422,
 				];
 			}
         }
@@ -95,7 +111,8 @@ class Login extends Model
         //if (!$this->validate() {
 	        return [
 				'success' => false,
-				'errors' => $this->getErrors(),
+				'errors'  => $this->getErrors(),
+				'status'  => 422,
 	        ];
 		//}
     }

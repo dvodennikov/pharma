@@ -14,6 +14,9 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+				'application/json' => 'yii\web\JsonParser'
+			],
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -39,9 +42,20 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'enableStrictParsing' => false,
             'rules' => [
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['login' => 'restapiv1/'],
+					'pluralize' => false,
+				],
             ],
         ],
+    ],
+    'modules' => [
+		'restapiv1' => [
+			'class' => 'common\modules\restapi\v1\RestApiModule',
+		],
     ],
     'on ' . yii\web\Application::EVENT_BEFORE_REQUEST => function() {
 		$request  = \Yii::$app->getRequest();
