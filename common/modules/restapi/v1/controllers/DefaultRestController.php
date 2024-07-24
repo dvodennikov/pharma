@@ -16,14 +16,14 @@ use yii\filters\Cors;
  */
 class DefaultRestController extends ActiveController
 {
-	public $modelClass = 'common\modules\restapi\v1\models\Login';
-	
+	/**
+	 * {@inheritdoc}
+	 */
 	public function behaviors()
 	{
 		$behaviors = parent::behaviors();
 		
 		// remove authentication filter
-		//$auth = $behaviors['authenticator'];
 		unset($behaviors['authenticator']);
 		
 		// add CORS filter

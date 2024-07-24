@@ -45,6 +45,10 @@ class LoginController extends DefaultRestController
 		return ['name' => 'Rest Api v1', 'version' => '1.0'];
 	}
     
+    /**
+     * Login action
+     * @return array
+     */
     public function actionLogin() 
 	{
 		$model = new Login();
@@ -53,7 +57,10 @@ class LoginController extends DefaultRestController
 		return $model->login();
 	}
 	
-	
+	/**
+	 * Logout action
+	 * @return array
+	 */
 	public function actionLogout() 
 	{
 		if ($user = \Yii::$app->user->identity) {
