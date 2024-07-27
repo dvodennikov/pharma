@@ -86,7 +86,7 @@ class Login extends Model
 				$user->save();
 			}
             
-            if (Yii::$app->user->login($user, 3600 * 24 * 30)) {
+            if (Yii::$app->user->login($user)) {
 				return [
 					'success'  => true,
 					'username' => Yii::$app->user->identity->username,
@@ -106,15 +106,11 @@ class Login extends Model
         
 		Yii::$app->response->statusCode = 422;
         
-        //return false;
-        
-        //if (!$this->validate() {
 	        return [
 				'success' => false,
 				'errors'  => $this->getErrors(),
 				'status'  => 422,
 	        ];
-		//}
     }
     
     /*

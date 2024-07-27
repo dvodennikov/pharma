@@ -10,6 +10,7 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\Cors;
+use Yii;
 
 /**
  * Default REST controller for the `restapiv1` module
@@ -61,4 +62,31 @@ class DefaultRestController extends ActiveController
 		return $behaviors;
 	}
 	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function beforeAction($action)
+	{
+		$sessionDuration = 3600;
+		
+		if (isset(Yii::$app->params['restapi.v1.sessionDuration'])) {
+			$sessionDuration = (int)Yii::$app->params['restapi.v1.sessionDuration']; 
+		} elseif (isset(Yii::$app->params['restapi.sessionDuration'])) {
+			$sessionDuration = (int)Yii::$app->params['restapi.sessionDuration'];
+		}
+			
+		$authorizationHeader = Yii::$app->request->getHeaders()->get('Authorization');
+		
+		if (preg_match('/Bearer\s+(\\w+)$/i', $authorizationHeader, $matches)) {
+			$user = \common\models\User::findIdentityByAccessToken($matches[1]);
+			
+			if (isset($user) && $user->isAccessTokenExpire(true, $sessionDuration))
+				throw new \yii\web\UnauthorizedHttpException();
+		}
+		
+		if (!parent::beforeAction($action)) 
+			return false;
+			
+		return true;
+	}
 }

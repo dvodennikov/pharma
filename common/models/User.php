@@ -277,6 +277,39 @@ class User extends ActiveRecord implements IdentityInterface
     }
     
     /**
+     * Check if is AccessToken expire
+     * @param boolean $clearAccessToken
+     * @param int $sessionDuration
+     * @return boolean
+     */
+    public function isAccessTokenExpire($clearAccessToken = false, $sessionDuration = null)
+    {
+		if (is_null($this->access_token))
+			return true;
+
+		if (is_null($sessionDuration)) {
+			$sessionDuration = 3600;//sec
+			
+			if (isset(Yii::$app->params['sessionDuration'])) {
+				$sessionDuration = (int)Yii::$app->params['sessionDuration']; 
+			}
+		}
+		
+		if (($sessionDuration > 0) && preg_match('/_(\\d+)$/', $this->access_token, $matches)) {
+			if ($matches[1] + $sessionDuration < time()) {
+				if ($clearAccessToken) {
+					$this->removeAccessToken();
+					$this->save();
+				}
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+    
+    /**
      * Generate password hash and auth key for user
      */
     public function afterValidate()
