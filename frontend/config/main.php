@@ -49,6 +49,14 @@ return [
 					'controller' => ['login' => 'restapiv1/'],
 					'pluralize' => false,
 				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/document', 'restapiv1/document'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET find' => 'search',
+					],
+				],
             ],
         ],
     ],
