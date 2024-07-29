@@ -77,7 +77,7 @@ class DefaultRestController extends ActiveController
 			
 		$authorizationHeader = Yii::$app->request->getHeaders()->get('Authorization');
 		
-		if (preg_match('/Bearer\s+(\\w+)$/i', $authorizationHeader, $matches)) {
+		if (preg_match('/Bearer\s+(\\S+)$/i', $authorizationHeader, $matches)) {
 			$user = \common\models\User::findIdentityByAccessToken($matches[1]);
 			
 			if (isset($user) && $user->isAccessTokenExpire(true, $sessionDuration))
