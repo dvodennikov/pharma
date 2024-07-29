@@ -57,6 +57,14 @@ return [
 						'GET find' => 'search',
 					],
 				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/document-type', 'restapiv1/document-type'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
             ],
         ],
     ],
