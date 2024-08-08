@@ -89,6 +89,14 @@ return [
 						'GET search' => 'search',
 					],
 				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/receipt', 'restapiv1/receipt'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
             ],
         ],
     ],
