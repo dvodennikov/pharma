@@ -92,16 +92,12 @@ class ReceiptController extends DefaultRestController
 						['error' => $model->hasErrors()?implode(' ', $model->getErrorSummary()):Yii::t('restapi', 'Could not parse data')])
 				);
 			
-			if (!isset($this->request->post()['ReceiptDrugs']))
+			if (!isset($this->request->post()['receiptDrugs']))
 				throw new BadRequestHttpException(Yii::t('app', 'No drugs specified'));
 			
-			$model->updateReceiptWithReceiptDrugs(false, $this->request->post()['ReceiptDrugs']);
+			$model->updateReceiptWithReceiptDrugs(false, $this->request->post()['receiptDrugs']);
 				
-			return [
-				'status' => 'success',
-				'code'   => 200,
-				'id'     => $model->id,
-			];
+			return $model;
 		} else {
 			throw new ForbiddenHttpException(Yii::t('restapi', 'POST request must be used to create receipt'));
 		}
@@ -125,16 +121,12 @@ class ReceiptController extends DefaultRestController
 						['error' => $model->hasErrors()?implode(' ', $model->getErrorSummary()):Yii::t('restapi', 'Could not parse data')])
 				);
 		
-			if (!isset($this->request->post()['ReceiptDrugs']))
+			if (!isset($this->request->post()['receiptDrugs']))
 				throw new BadRequestHttpException(Yii::t('app', 'No drugs specified'));
 			
-			$model->updateReceiptWithReceiptDrugs(true, $this->request->post()['ReceiptDrugs']);
+			$model->updateReceiptWithReceiptDrugs(true, $this->request->post()['receiptDrugs']);
 			
-			return [
-				'status' => 'success',
-				'code'   => 200,
-				'id'     => $model->id,
-			];
+			return $model;
 		} else {
 			throw new ForbiddenHttpException(Yii::t('restapi', 'PUT/PATCH request must be used to update receipt'));
         }

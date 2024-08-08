@@ -184,7 +184,7 @@ class Receipt extends \yii\db\ActiveRecord
     public function updateReceiptWithReceiptDrugs($clearReceiptDrugs = true, $receiptDrugs = null)
     {
 		$receiptDrugs = ReceiptDrugs::loadReceiptDrugs(
-			is_array($receiptDrugs)?$receiptDrugs:'ReceiptDrugs', 
+			is_array($receiptDrugs)?$receiptDrugs:'receiptDrugs', 
 			$this
 		);
 		
