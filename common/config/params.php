@@ -11,4 +11,5 @@ return [
     'controlPanelLastReceiptsNumber' => 3,
     'controlPanelLastDrugsNumber' => 5,
     'cacheExpire' => 3600,
+    'restapi.sessionDuration' => 0,
 ];
