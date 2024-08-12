@@ -35,7 +35,7 @@ class DocumentTypeController extends DefaultRestController
 				],
 				[
 					'allow' => true,
-					'verbs' => ['PATCH', 'DELETE'],
+					'verbs' => ['PATCH', 'PUT', 'DELETE'],
 					'roles' => ['updateDocumentType'],
 				],
 			],
