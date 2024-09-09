@@ -1,3 +1,5 @@
+import './site.css';
+
 $('xxxxxxxxxxxxxxbutton#add-custom-fields').click(function(e) {
 	e.preventDefault();
 	var count = $('#custom-fields').children('div.control-group').length;
@@ -27,8 +29,8 @@ $('button#add-custom-fields').click(function(e) {
 
 $('button#add-drug').click(function(e) {
 	e.preventDefault();
-	drugId = $('select#receipt-drug-drug_id').val();
-	quantity = $('input#receipt-drug-quantity').val();
+	var drugId = $('select#receipt-drug-drug_id').val();
+	var quantity = $('input#receipt-drug-quantity').val();
 	console.log(drugId);
 	addItem('#drugs', '/receipt/get-new-drug?drug_id=' + drugId + '&quantity=' + quantity, 'button.delete-drug');
 })
@@ -92,7 +94,7 @@ function getSelectOptions(url, select) {
 	}).done(function(html) {
 		console.log(html);
 		var personList = $(select);
-		$(personList).html(html);
+		$(personList).html(html);$('select#receipt-drug-drug_id').val()
 	});
 }
 
