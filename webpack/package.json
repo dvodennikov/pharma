@@ -7,12 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "prod": "npx webpack --config webpack.production.js --env production",
-    "dev": "npx webpack --config webpack.development.js",
-    "production": "npx webpack --env build='production'",
-    "development": "npx webpack --env build='development'"
+    "prod": "npx webpack --config webpack.production.js",
+    "dev": "npx webpack --config webpack.development.js"
   },
   "keywords": [],
   "author": "",
