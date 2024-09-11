@@ -11,7 +11,7 @@ module.exports = merge(common, {
 				use: [
 					'style-loader',
 					'css-loader',
-					//'postcss-loader',
+					'postcss-loader',
 					//'sass-loader,'
 				],
 				include: path.resolve(__dirname, '../src/'),
