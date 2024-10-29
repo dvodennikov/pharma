@@ -9,8 +9,20 @@ class SearchSelect extends \yii\base\Widget {
 	public $id;
 	/** URL for AJAX queries */
 	public $url;
+	/** Label for select field */
+	public $label;
 	/** Field name for input element to POST form's data */
 	public $fieldName;
+	/** Caption or hint for select field */
+	public $caption;
+	/** Value for select (hidden input field) field */
+	public $value;
+	/** Minimal number of characters to search */
+	public $minCharsSearch = 3;
+	/** Delay in ms before start search 
+	 *  If input value changed cancel search and wait for new delay
+	 */
+	public $searchDelay = 0;
 	
 	/**
 	 * {@inheritdoc}
@@ -43,7 +55,6 @@ class SearchSelect extends \yii\base\Widget {
 		$view->registerJs($this->renderInitScript());
 		$view->registerCssFile('/css/search-select.css');
 		
-		echo "\n" . 'Search select';
 		echo "\n" . Html::endTag('div');
 		
 		//$this->registerPlugin('search-select');
@@ -58,6 +69,11 @@ class SearchSelect extends \yii\base\Widget {
 		       '"' . $this->url . '", ' . 
 		       '{' . 
 					'"fieldName":"' . $this->fieldName . '"' . 
+					(isset($this->label)?(',"label":"' . htmlspecialchars($this->label) . '"'):'') .
+					(isset($this->value)?(',"value":' . $this->value):'') .
+					(isset($this->caption)?(',"caption":"' . htmlspecialchars($this->caption) . '"'):'') .
+					(isset($this->minCharsSearch)?(',"minCharsSearch":' . $this->minCharsSearch):'') . 
+					(isset($this->searchDelay)?(',"searchDelay":' . $this->searchDelay):'') . 
 		       '});';
 	}
 }
