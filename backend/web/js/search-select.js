@@ -189,7 +189,9 @@ console.log(options);
     console.log('catch onFocus');
   };
 
-  this.toggleShowSelect = function() {
+  this.toggleShowSelect = function(e) {
+	e.stopPropagation();
+	
     if ($(self.select).hasClass('active')) {
       self.hideSearchField();
     } else {
@@ -197,7 +199,9 @@ console.log(options);
     }
   }
 
-  this.selectOption = function() {
+  this.selectOption = function(e) {
+	e.stopPropagation();
+
     self.input.attr('value', $(this).attr('data-value'));
     self.selectedValueContainer.html($(this).html());
     self.hideSearchField();
@@ -273,6 +277,19 @@ console.log(options);
       self.search();
     }
   });*/
+  
+  $(document).children('html').on('click', function(e) {
+	console.log($(e.target).parent('#' + self.id));
+	console.log($(e.target).parent('#' + self.id).length);
+	if ($(e.target).parent('#' + self.id).length === 0)
+	  if ($(self.select).hasClass('active'))
+	    self.hideSearchField();
+  });
+  
+  //prevent closing selectList on it's or childs click
+  $(this.selectList).on('click', function(e) {
+	e.stopPropagation();
+  });
 
   return this;
 }
