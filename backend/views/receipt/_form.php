@@ -23,6 +23,25 @@ use yii\widgets\ActiveForm;
 		'model'        => $model,
 		'searchPerson' => $searchPerson
 	]) ?>
+	<?php 
+		$searchSelectOptions = [
+			'class'          => 'form-control',
+			'url'            => 'http://admin.pharma.localhost/receipt/get-persons', 
+			'searchParam'    => 'person_search',
+			'fieldName'      => 'Receipt[person_id]',
+			'label'          => Yii::t('app', 'Person'),
+			'searchHint'     => Yii::t('app', 'Search person'),
+			'minCharsSearch' => 5,
+			'searchDelay'    => 5000,
+			'mimic'          => false//'select#receipt-drug-drug_id'
+		];
+		
+		if (isset($model->person_id)) {
+			$searchSelectOptions['value']   = $model->person_id;
+			$searchSelectOptions['caption'] = htmlspecialchars(common\models\Person::getPersonTextRepresentationById($model->person_id));
+		}
+	?>
+	<?= \common\widgets\SearchSelect::widget($searchSelectOptions); ?>
 	
 	<?= $form->field($model, 'issue_date')->textInput(['type' => 'date', 'max' => date('Y-m-d')]) ?>
 	

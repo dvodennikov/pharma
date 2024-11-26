@@ -9,6 +9,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
+	<noscript>
     <div class="form-group row">
 		<div class="col-sm-6">
 			<label for="receipt-person_id" 
@@ -40,3 +41,4 @@ use yii\widgets\ActiveForm;
 			]) ?>
 		</div>
     </div>
+    </noscript>

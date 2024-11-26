@@ -16,6 +16,16 @@ console.log(options);
   
   this.url = url;
   
+  this.class = '';
+  if (options.class)
+    if (typeof options.class === 'string')
+      this.class = options.class;
+  
+  this.searchParam = 'search';
+  if (options.searchParam) 
+	if (typeof options.searchParam === 'string')
+	  this.searchParam = options.searchParam;
+  
   this.minCharsSearch = 3;
   if (options.minCharsSearch)
     if ((typeof options.minCharsSearch ==='number') && 
@@ -38,17 +48,20 @@ console.log(options);
 	}
   
   this.container = $("#" + id);
-  this.label = $('<label>' + (('label' in options)?options.label:'') + '</label>');
-  this.input = $('<input name="' + (('fieldName' in options)?options.fieldName:id) + '" type="hidden"' +
-                 (('value' in options)?(' value="' + options.value + '"'):'') + '>');
+  this.label = $('<label for="search-' + this.id + '">' + (('label' in options)?options.label:'') + '</label>');
+  this.input = $('<input id="search-' + this.id + '" name="' + (('fieldName' in options)?options.fieldName:id) + 
+                 '" type="hidden"' + (('value' in options)?(' value="' + options.value + '"'):'') + '>');
 
   console.log(options);
   this.select = '<div class="search-select">';
-  this.select += '<div class="selected-value-container">' + (('caption' in options)?options.caption:'Choose option') + '</div>';
+  this.select += '<div class="selected-value-container ' + this.class + '">' + 
+                 (('caption' in options)?options.caption:'Choose option') + 
+                 '</div>';
   this.select += '<div class="select-list">';
-  this.select += '<div class="search-field-container"><input class="search-field" type="text" placeholder="' + 
+  this.select += '<div class="search-field-container"><span class="search-field-close-button">x</span>' +
+                 '<input class="search-field" type="text" placeholder="' + 
                  (('searchHint' in options)?options.searchHint:'Search') + 
-                 '"></input><span class="search-field-close-button">x</span></div>';
+                 '"></input></div>';
   this.select += '<div class="values-list-container"><ul class="search-select-list">';
   
   if (Array.isArray(options.values)) {
@@ -77,13 +90,79 @@ console.log(options);
   $(this.selectList).css({
     'display': 'none',
     'position': 'absolute',
-    'min-width': $(this.select).width()
+    'min-width': $(this.select).css('width')
   });
-  console.log('top' + $(this.select).position().top + ' - ' + $(this.select).height());
+  
+  this.mimic = function(mimic) {
+	let copycat;
+	let form = $(self.select).parents('form');
+    if (typeof mimic === 'string') {
+	  console.log('options: ' + mimic);
+	  /*if (mimic.search('\\.') >= 0) {
+		copycat = $(mimic).first();
+	  } else if (mimic.search('#') >= 0) {
+		copycat = $(mimic);
+		console.log(copycat);
+	  } else {
+		copycat = $(mimic).first();
+	  }*/
+	  copycat = $(form).children(mimic).last();
+	  
+	  if ((typeof copycat !== 'object') ||
+		  (copycat.length == 0)) {
+	    console.log('no copycat found: ' + copycat);
+	    //copycat = $('select').first();
+	    //Use first select if no mimic found
+	    let example = $('<select style="display: none"></select>');
+	    let match;
+		if (match = mimic.match(/\.([^.\s#]+)/)) {
+		  $(example).addClass(match[1]);
+		} else if (match = mimic.match(/\#([^.\s#]+)/)) {
+		  $(example).attr('id', match[1]);
+		}
+		
+		$(form).append(example);
+		
+	    copycat = self.mimic(true);
+	  }
+	} else if (mimic === true) {
+		copycat = $(form).children('select').last();
+		
+		/*if ((typeof mimic !== 'object') ||
+		    (mimic.length === 0)) {
+		  $(self.select).parents('form').append('<select class="form-control" style="display: none"></select>');
+		  
+		  copycat = $('select').first();
+		}*/
+	} else {
+	  $(self.select).addClass('search-select-default');
+		
+      return;
+
+	}
+	
+	if ((typeof copycat === 'object') &&
+	    (copycat.length > 0)) {
+	  $(self.selectedValueContainer).css('margin', $(copycat).css('margin'));
+	  $(self.selectedValueContainer).css('padding', $(copycat).css('padding'));
+	  $(self.selectedValueContainer).css('color', $(copycat).css('color'));
+	  $(self.selectedValueContainer).css('background', $(copycat).css('background'));
+	  $(self.selectedValueContainer).css('font', $(copycat).css('font'));
+	  $(self.selectedValueContainer).css('font-size', $(copycat).css('font-size'));
+	  $(self.selectedValueContainer).css('border', $(copycat).css('border'));
+	  $(self.selectedValueContainer).css('border-radius', $(copycat).css('border-radius'));
+	} else {
+	  $(self.select).addClass('search-select-default');
+	}
+  };
+  
   $(this.container).append(this.label);
   $(this.container).append(this.input);
   $(this.container).append(this.select);
-  self = this;
+  let self = this;
+
+  if ('mimic' in options)
+    this.mimic(options.mimic);
 
   this.hideSearchField = function() {
     console.log(!$(self.select).hasClass('active'));
@@ -103,6 +182,8 @@ console.log(options);
     $(self.select).addClass('active');
     //$(self.searchFieldContainer).css('display', 'block');
     $(self.selectList).css('display', 'block');
+    $(self.selectList).css('width', $(self.select).css('width'));
+    console.log('set width to ' + $(self.select).css('width'));
     $(self.searchField).focus();
     console.log(self.select);
     console.log('catch onFocus');
@@ -126,7 +207,7 @@ console.log(options);
   
   this.search = function () {
     $.ajax({
-      url: self.url + '?person_search=' + $(self.searchField).val(),
+      url: self.url + '?' + self.searchParam + '=' + $(self.searchField).val(),
       method: 'GET',
       dataType: 'json',
       contentType: 'application/json'
@@ -167,6 +248,16 @@ console.log(options);
           self.search();
       }, self.searchDelay);
     }
+  });
+  
+  $(this.searchField).on('keydown', function(e) {
+	console.log(e);
+    
+    if (e.key === "Escape") {
+	  self.hideSearchField();
+	  
+	  return;
+	}
   });
   
   /*$(this.searchField).on('keypress', function(e) {

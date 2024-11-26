@@ -29,6 +29,7 @@ $idx = 0;
 	<h4><?= \Yii::t('app', 'Add drug') ?></h4>
 	<div class="form-group row">
 		<div class="col-sm-6">
+			<noscript>
 			<label for="receipt-drug-drug_id" 
 				   class="control-label">
 			<?= \Yii::t('app', 'Drug') ?>
@@ -41,6 +42,23 @@ $idx = 0;
 				'searchDrug' => isset($searchDrug)?$searchDrug:null
 			]) ?>
 			</select>
+			</noscript>
+			
+			<?php 
+				$searchSelectOptions = [
+					'url'            => 'http://admin.pharma.localhost/receipt/get-search-drugs', 
+					'searchParam'    => 'drug_search',
+					'fieldName'      => 'AddDrug[drug_id]',
+					'label'          => Yii::t('app', 'Drug'),
+					'searchHint'     => Yii::t('app', 'Search drug'),
+					'caption'        => Yii::t('app', 'Choose drug'),
+					'minCharsSearch' => 5,
+					'searchDelay'    => 5000,
+					'mimic'          => 'select.form-control'
+				];
+			?>
+			<?= \common\widgets\SearchSelect::widget($searchSelectOptions); ?>
+			
 			<label for="receipt-drug-quantity"
 				   class="control-label">
 			<?= \Yii::t('app', 'Quantity') ?>
@@ -55,6 +73,7 @@ $idx = 0;
 				'formaction' => '/receipt/add-drug' . (isset($model->id)?('?id=' . $model->id):'')
 			]) ?>
 		</div>
+		<noscript>
 		<div class="col-sm-6">
 			<label for="drug_search"
 				   class="control-label">
@@ -69,4 +88,5 @@ $idx = 0;
 				'formaction' => '/receipt/search-drug' . (isset($model->id)?('?id=' . $model->id):'')
 			]) ?>
 		</div>
+		</noscript>
 	</div>

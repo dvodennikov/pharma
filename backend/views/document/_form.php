@@ -29,6 +29,7 @@ $documentTypes = [];
     <?= $form->field($model, 'number')->textInput(isset($model->documentType->number_mask)?['pattern' => htmlspecialchars($model->documentType->number_mask)]:[]) ?>
     
     <?= $form->field($model, 'surname')->textInput() ?>
+    <?= \common\widgets\SearchSelect::widget(['url' => 'url', 'fieldName' => 'person']); ?>
     
     <?= $form->field($model, 'name')->textInput() ?>
     
