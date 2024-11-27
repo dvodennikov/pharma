@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var common\models\Document $model */
+/** @var common\models\Receipt $model */
 /** @var string $searchPerson */
 
 use yii\helpers\Html;
