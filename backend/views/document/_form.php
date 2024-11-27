@@ -18,7 +18,20 @@ $documentTypes = [];
     
     <?= $this->render('_document_type', ['model' => $model]) ?>
 
+	<noscript>
 	<?= $this->render('_person', ['model' => $model]) ?>
+	</noscript>
+	<?= \common\widgets\SearchSelect::widget([
+		'class'          => 'form-control',
+		'url'            => 'http://admin.pharma.localhost/document/get-persons', 
+		'searchParam'    => 'person_search',
+		'fieldName'      => 'Document[person_id]',
+		'label'          => Yii::t('app', 'Person'),
+		'searchHint'     => Yii::t('app', 'Search person'),
+		'minCharsSearch' => 5,
+		'searchDelay'    => 5000,
+		'mimic'          => false//'select#receipt-drug-drug_id'
+	]) ?>
     
     <div>
 		<?= \yii\helpers\Html::a(\Yii::t('app', 'Create person'), \yii\helpers\Url::to(['person/create']), ['class' => 'btn btn-primary', 'target' => '_blank']) ?>
@@ -29,7 +42,6 @@ $documentTypes = [];
     <?= $form->field($model, 'number')->textInput(isset($model->documentType->number_mask)?['pattern' => htmlspecialchars($model->documentType->number_mask)]:[]) ?>
     
     <?= $form->field($model, 'surname')->textInput() ?>
-    <?= \common\widgets\SearchSelect::widget(['url' => 'url', 'fieldName' => 'person']); ?>
     
     <?= $form->field($model, 'name')->textInput() ?>
     

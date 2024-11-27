@@ -253,27 +253,36 @@ class DocumentController extends Controller
 	 * secondname and birthdate for AJAX request
 	 * @return string|\yii\web\Response
 	 */
-	public function actionGetPersons($id)
+	public function actionGetPersons()
 	{
-		$person     = [];
+		$id                   = \Yii::$app->request->get('id');
+		$person               = [];
 		$person['surname']    = \Yii::$app->request->get('surname', null);
 		$person['name']       = \Yii::$app->request->get('name', null);
 		$person['secondname'] = \Yii::$app->request->get('secondname', null);
 		$person['birthdate']  = \Yii::$app->request->get('birthdate', null);
 		
-		$model = $this->findModel($id);
+		$model = isset($id)?$this->findModel($id):new Document();
 		
-		if (!isset($model->id))
-			throw new NotFoundHttpException(\Yii::t('app', 'Not found'));
+		/*if (!isset($model->id))
+			throw new NotFoundHttpException(\Yii::t('app', 'Not found'));*/
+		
+		if (\Yii::$app->request->contentType == 'application/json')
+			$searchPerson = $this->request->get('person_search');
+			
+			return $this->renderAjax('_person_ajax', [
+				'model'        => $model,
+				'searchPerson' => $searchPerson,
+			]);
 		
 		foreach ($person as $name => $field) {
 			//if (isset($field))
 				$model->$name = $field;
 		}
-
+		
 		return $this->renderAjax('_person', ['model' => $model]);
 	 }
-
+	 
     /**
      * Finds the Document model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
