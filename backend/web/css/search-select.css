@@ -8,8 +8,8 @@
 }
 
 .search-select .selected-value-container {
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
+  /*text-decoration-line: underline;
+  text-decoration-style: dashed;*/
   cursor: pointer;
 }
 

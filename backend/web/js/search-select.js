@@ -1,5 +1,4 @@
 function SearchSelect(id, url, options = {}) {
-console.log(options);
   if (!id) {
 	  console.log('Search select error: no id specified for select container');
 	  
@@ -52,7 +51,6 @@ console.log(options);
   this.input = $('<input id="search-' + this.id + '" name="' + (('fieldName' in options)?options.fieldName:id) + 
                  '" type="hidden"' + (('value' in options)?(' value="' + options.value + '"'):'') + '>');
 
-  console.log(options);
   this.select = '<div class="search-select">';
   this.select += '<div class="selected-value-container ' + this.class + '">' + 
                  (('caption' in options)?options.caption:'Choose option') + 
@@ -80,13 +78,6 @@ console.log(options);
   this.searchField = $(this.searchFieldContainer).children('.search-field');
   this.valuesListContainer = $(this.selectList).children('.values-list-container');
 
-  /*$(this.searchFieldContainer).css({
-    'display': 'none',
-    'position': 'absolute',
-    //'left': $(this.select).position().left,
-    //'top': ($(this.select).position().top - $(this.select).height() - 10),
-    'min-width': $(this.select).width()
-  });*/
   $(this.selectList).css({
     'display': 'none',
     'position': 'absolute',
@@ -97,15 +88,6 @@ console.log(options);
 	let copycat;
 	let form = $(self.select).parents('form');
     if (typeof mimic === 'string') {
-	  console.log('options: ' + mimic);
-	  /*if (mimic.search('\\.') >= 0) {
-		copycat = $(mimic).first();
-	  } else if (mimic.search('#') >= 0) {
-		copycat = $(mimic);
-		console.log(copycat);
-	  } else {
-		copycat = $(mimic).first();
-	  }*/
 	  copycat = $(form).children(mimic).last();
 	  
 	  if ((typeof copycat !== 'object') ||
@@ -165,12 +147,10 @@ console.log(options);
     this.mimic(options.mimic);
 
   this.hideSearchField = function() {
-    console.log(!$(self.select).hasClass('active'));
     if (!$(self.select).hasClass('active'))
       return;
 
     $(self.select).removeClass('active');
-    //$(self.searchFieldContainer).css('display', 'none');
     $(self.selectList).css('display', 'none');
   };
 
@@ -180,13 +160,9 @@ console.log(options);
       return;
 
     $(self.select).addClass('active');
-    //$(self.searchFieldContainer).css('display', 'block');
     $(self.selectList).css('display', 'block');
     $(self.selectList).css('width', $(self.select).css('width'));
-    console.log('set width to ' + $(self.select).css('width'));
     $(self.searchField).focus();
-    console.log(self.select);
-    console.log('catch onFocus');
   };
 
   this.toggleShowSelect = function(e) {
@@ -216,13 +192,11 @@ console.log(options);
       dataType: 'json',
       contentType: 'application/json'
     }).done(function(data) {
-      console.log(data);
       html = '';
       for (i = 0; i < data.values.length; i++) {
         html += '<li data-value=' + data.values[i].value + '>' + data.values[i].title + '</li>';
       }
 
-      console.log(html);
       $(self.valuesListContainer).find('ul').html(html);
       $(self.valuesListContainer).find('li').on('click', self.selectOption);
     }).fail(function(jqHRX, textStatus) {
@@ -232,22 +206,16 @@ console.log(options);
     });
   }
 
-  //$(this.select).on('focusin', this.showSearchField);
   $(this.selectedValueContainer).on('click', this.toggleShowSelect);
-  //$(this.select).on('focusout', this.hideSearchField);
   $(this.searchFieldContainer).find('.search-field-close-button').on('click', this.hideSearchField);
-  //$(window).on('click', function(e) { if ($(e.target).parent('#custom-select').first()) { self.hideSearchField; }});
   $(this.valuesListContainer).find('li').on('click', this.selectOption);
 
   $(this.searchField).on('input', function(e) {
 	e.preventDefault();
-    console.log(this);
     
     if ($(self.searchField).val().length >= self.minCharsSearch) {
 	  let searchString = $(self.searchField).val();
-	  console.log('going to search for: ' + searchString);
 	  setTimeout(function() {
-		console.log('check input string: ' + $(self.searchField).val() + '==' + searchString);
 		if ($(self.searchField).val() == searchString)
           self.search();
       }, self.searchDelay);
@@ -255,8 +223,6 @@ console.log(options);
   });
   
   $(this.searchField).on('keydown', function(e) {
-	console.log(e);
-    
     if (e.key === "Escape") {
 	  self.hideSearchField();
 	  
@@ -264,23 +230,7 @@ console.log(options);
 	}
   });
   
-  /*$(this.searchField).on('keypress', function(e) {
-	//prevent form submission on press enter
-    if (e.witch == 13) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      return false;
-    }
-    
-    if ($(self.searchField).val().length >= 3) {
-      self.search();
-    }
-  });*/
-  
   $(document).children('html').on('click', function(e) {
-	console.log($(e.target).parent('#' + self.id));
-	console.log($(e.target).parent('#' + self.id).length);
 	if ($(e.target).parent('#' + self.id).length === 0)
 	  if ($(self.select).hasClass('active'))
 	    self.hideSearchField();
