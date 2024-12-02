@@ -31,6 +31,7 @@ use yii\widgets\ActiveForm;
 			'fieldName'      => 'Receipt[person_id]',
 			'label'          => Yii::t('app', 'Person'),
 			'searchHint'     => Yii::t('app', 'Search person'),
+			'caption'        => Yii::t('app', 'Choose person'),
 			'minCharsSearch' => 5,
 			'searchDelay'    => 5000,
 			'mimic'          => false//'select#receipt-drug-drug_id'
