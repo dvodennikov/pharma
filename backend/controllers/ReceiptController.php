@@ -262,6 +262,12 @@ class ReceiptController extends Controller
 		$model        = isset($id)?$this->findModel((int) $id):new Receipt();
 		$searchPerson = $this->request->get('person_search');
 		
+		if (\Yii::$app->request->contentType == 'application/json')
+			return $this->renderAjax('_person_ajax', [
+				'model'        => $model,
+				'searchPerson' => $searchPerson,
+			]);
+		
 		return $this->renderAjax('_person', [
 			'model'        => $model,
 			'searchPerson' => $searchPerson,
@@ -391,6 +397,12 @@ class ReceiptController extends Controller
 		$id         = $this->request->get('id');
 		$model      = isset($id)?$this->findModel((int) $id):new Receipt();
 		$searchDrug = $this->request->get('drug_search');
+		
+		if (\Yii::$app->request->contentType == 'application/json')
+			return $this->renderAjax('_search_drugs_ajax', [
+				'model'      => $model,
+				'searchDrug' => $searchDrug,
+			]);
 		
 		return $this->renderAjax('_search_drugs', [
 			'model'      => $model,

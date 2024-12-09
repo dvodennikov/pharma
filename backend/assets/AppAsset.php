@@ -15,7 +15,7 @@ class AppAsset extends AssetBundle
         'css/site.css',
     ];
     public $js = [
-		'js/document-type-custom-fields.js',
+		'js/custom-fields.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
