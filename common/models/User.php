@@ -287,7 +287,7 @@ class User extends ActiveRecord implements IdentityInterface
 			$auth->assign($role, $this->id);
 	}
 	
-	/*
+	/**
 	 * Get user role
 	 * @return yii\rbac\Role
 	 */
@@ -298,6 +298,10 @@ class User extends ActiveRecord implements IdentityInterface
 		return array_key_first($auth->getRolesByUser($this->id));
 	}
 	
+	/**
+	 * Get user name by id
+	 * @return string
+	 */
 	public static function getUsernameById($id)
 	{
 		$user = User::findOne(['id' => $id]);
@@ -305,6 +309,13 @@ class User extends ActiveRecord implements IdentityInterface
 		return isset($user->username)?$user->username:\Yii::t('app', 'none');
 	}
 	
+	/**
+	 * Check if user has specified permission
+	 * @param string $permissionName name of the permission to check
+	 * @param array $params additional parameters
+	 * @param boolean $allowCaching allow chaching result (default true)
+	 * @return boolean
+	 */
 	public function can($permissionName, $params = [], $allowCaching = true)
     {
 		throw new \yii\base\NotSupported('not supported');
