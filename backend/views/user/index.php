@@ -34,9 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
 				},
 				'format' => 'html',
 			],
-            //'auth_key',
-            //'password_hash',
-            //'password_reset_token',
             'email:email',
             [
 				'attribute' => 'status',
@@ -53,12 +50,12 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
             [
 				'attribute' => 'updated_at',
-				'value' => function($model) {
+				/*'value' => function($model) {
 					//return date('d/m/Y H:i:s', $model->updated_at);
 					return Yii::$app->formatter->asDateTime($model->updated_at);
-				},
+				},*/
+				'format' => ['date', 'php:d/m/Y H:i:s'],
 			],
-            //'verification_token',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, User $model, $key, $index, $column) {
