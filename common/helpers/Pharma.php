@@ -117,7 +117,8 @@ class Pharma {
 		$paramsUrl       = '';
 		
 		foreach ($params as $param => $value)
-			$paramsUrl .= '&' . urlencode($param) . '=' . urlencode($value);
+			if ($param !== 'language')
+				$paramsUrl .= '&' . urlencode($param) . '=' . urlencode($value);
 		
 		$html            = '<div class="languages-switching">';
 		
