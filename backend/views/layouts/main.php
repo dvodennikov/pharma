@@ -48,13 +48,18 @@ AppAsset::register($this);
 		$menuItems[] = ['label' => \Yii::t('app', 'Persons'), 'url' => ['/person/index']];
 		$menuItems[] = ['label' => \Yii::t('app', 'Documents'), 'url' => ['/document/index']];
 		
-		if (Yii::$app->user->can('createDocumentType')) 
+		$userPermissions = [];
+		foreach (\Yii::$app->authManager->getPermissionsByUser(\Yii::$app->user->id) as $permission) {
+			$userPermissions[$permission->name] = true;
+		}
+		
+		if (array_key_exists('createDocumentType', $userPermissions)) 
 			$menuItems[] = ['label' => \Yii::t('app', 'Document types'), 'url' => ['/document-type/index']];
 			
-		if (Yii::$app->user->can('createUnit'))
+		if (array_key_exists('createUnit', $userPermissions))
 			$menuItems[] = ['label' => \Yii::t('app', 'Units'), 'url' => ['/unit/index']];
 			
-		if (Yii::$app->user->can('createUser'))
+		if (array_key_exists('createUser', $userPermissions))
 			$menuItems[] = ['label' => \Yii::t('app', 'Users'), 'url' => ['/user/index']];
 	}
     echo Nav::widget([
