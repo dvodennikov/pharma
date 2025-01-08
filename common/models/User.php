@@ -16,6 +16,7 @@ use yii\web\IdentityInterface;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $verification_token
+ * @property string $access_token
  * @property string $email
  * @property string $auth_key
  * @property integer $status
@@ -109,7 +110,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::findOne(['access_token' => $token, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -260,6 +261,55 @@ class User extends ActiveRecord implements IdentityInterface
     }
     
     /**
+     * Generates new acess token
+     */
+    public function generateAccessToken()
+    {
+        $this->access_token = Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    /**
+     * Removes access token
+     */
+    public function removeAccessToken()
+    {
+        $this->access_token = null;
+    }
+    
+    /**
+     * Check if is AccessToken expire
+     * @param boolean $clearAccessToken
+     * @param int $sessionDuration
+     * @return boolean
+     */
+    public function isAccessTokenExpire($clearAccessToken = false, $sessionDuration = null)
+    {
+		if (is_null($this->access_token))
+			return true;
+
+		if (is_null($sessionDuration)) {
+			$sessionDuration = 3600;//sec
+			
+			if (isset(Yii::$app->params['sessionDuration'])) {
+				$sessionDuration = (int)Yii::$app->params['sessionDuration']; 
+			}
+		}
+		
+		if (($sessionDuration > 0) && preg_match('/_(\\d+)$/', $this->access_token, $matches)) {
+			if ($matches[1] + $sessionDuration < time()) {
+				if ($clearAccessToken) {
+					$this->removeAccessToken();
+					$this->save();
+				}
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+    
+    /**
      * Generate password hash and auth key for user
      */
     public function afterValidate()
@@ -274,6 +324,7 @@ class User extends ActiveRecord implements IdentityInterface
 	
 	/**
 	 * Set role
+	 * @param bool $flushRoles flush roles before set role
 	 */
 	public function setRole($flushRoles = false)
 	{
@@ -300,6 +351,7 @@ class User extends ActiveRecord implements IdentityInterface
 	
 	/**
 	 * Get user name by id
+	 * @param int $id
 	 * @return string
 	 */
 	public static function getUsernameById($id)

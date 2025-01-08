@@ -14,6 +14,9 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+				'application/json' => 'yii\web\JsonParser'
+			],
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -39,9 +42,68 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'enableStrictParsing' => false,
             'rules' => [
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['login' => 'restapiv1/'],
+					'pluralize' => false,
+				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/document', 'restapiv1/document'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET find' => 'search',
+					],
+				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/document-type', 'restapiv1/document-type'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/person', 'restapiv1/person'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/unit', 'restapiv1/unit'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/drug', 'restapiv1/drug'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
+				[
+					'class' => 'yii\rest\UrlRule',
+					'controller' => ['restapiv1/receipt', 'restapiv1/receipt'],
+					'pluralize' => false,
+					'extraPatterns' => [
+						'GET search' => 'search',
+					],
+				],
             ],
         ],
+    ],
+    'modules' => [
+		'restapiv1' => [
+			'class' => 'common\modules\restapi\v1\RestApiModule',
+		],
     ],
     'on ' . yii\web\Application::EVENT_BEFORE_REQUEST => function() {
 		$request  = \Yii::$app->getRequest();

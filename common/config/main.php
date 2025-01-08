@@ -25,6 +25,14 @@ return [
 						'app' => 'app.php',
 					],
 				],
+				'restapi*' => [
+					'class'          => 'yii\i18n\PhpMessageSource',
+					'basePath'       => dirname(dirname(__DIR__)) . '/common/messages',
+					'sourceLanguage' => 'en-US',
+					'fileMap'        => [
+						'restapi' => 'restapi.php',
+					],
+				],
 			],
 		],
     ],
